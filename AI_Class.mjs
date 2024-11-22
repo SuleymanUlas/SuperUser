@@ -1459,8 +1459,8 @@ export class Norology {
                 adjective = adjective.filter(word => word.word.includes("suspicious") || word.word.includes("doubtful") || word.word.includes("questioning"));
                 verb = verb.filter(word => word.word.includes("question") || word.word.includes("suspect") || word.word.includes("distrust"));
             }
-            let selectedVerb = verb[Math.floor(Math.random() * verb.length)]?.word || "does"; // 'word' olarak string alıyoruz
-            let selectedNoun = noun[Math.floor(Math.random() * noun.length)]?.word || "something"; // Aynı şekilde
+            let selectedVerb = verb[Math.floor(Math.random() * verb.length)]?.word || "does";
+            let selectedNoun = noun[Math.floor(Math.random() * noun.length)]?.word || "something"; 
             let selectedAdjective = adjective[Math.floor(Math.random() * adjective.length)]?.word || "good";
             let selectedConjunction = conjunction[Math.floor(Math.random() * conjunction.length)]?.word || "and";
 
