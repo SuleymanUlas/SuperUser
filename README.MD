@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <p align="center"><img src="https://github.com/SuleymanUlas/SuperUser/blob/6314f58c550a9ab21fecb94354526c3214f6817a/profil/logo.png?raw=true" alt="logo" border="0"></p>
+    <p align="center"><img src="https://github.com/SuleymanUlas/SuperUser/blob/main/profil/logo.png?raw=true" alt="logo" border="0"></p>
     <p align="center"><strong>SUPER USER AI</strong></p>
     <hr>
     <pre align="center">
