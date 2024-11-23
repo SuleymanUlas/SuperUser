@@ -1213,7 +1213,7 @@ export class CreateQuery {
         const feData = await fe.AllData();
         const maxValue = Math.max(...Object.values(feData));
         const maxKey = Object.keys(feData).find(key => feData[key] === maxValue);
-        
+
         let mood = '';
         switch (maxKey) {
             case 'Hqx': mood = 'Happy'; break;
@@ -1228,7 +1228,7 @@ export class CreateQuery {
         const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await this.selectWordsBasedOnQueryAndMood(querymemory, mood, wordsData);
         let question = await this.generateQuestion(querymemory, User, selectedVerb, selectedNoun, selectedAdjective, selectedConjunction);
 
-        return question;  
+        return question;
     }
     async generateQuestion(query, user, selectedVerb, selectedNoun, selectedAdjective, selectedConjunction) {
         const ceu = new Code_Edit_Used();
@@ -1346,6 +1346,10 @@ export class Norology {
         const personalReplyTemplates = templates.personalReplyTemplates;
         const healthReplyTemplates = templates.healthReplyTemplates;
         const careerReplyTemplates = templates.careerReplyTemplates;
+        const dietReplyTemplates = templates.dietReplyTemplates;
+        const workReplyTemplates = templates.workReplyTemplates;
+        const emotionalReplyTemplates = templates.emotionalReplyTemplates;
+        const supportReplyTemplates = templates.supportReplyTemplates;
         async function generatePersonalizedReply(query, user) {
             let wordsData = await loadWordData();
             let data = await ceu.UserData(user, { prp: 'all' });
@@ -1426,7 +1430,6 @@ export class Norology {
             }
             return value || 'something';
         }
-
         const selectWordsBasedOnQueryAndMood = async (query, mood, wordsData) => {
             let verb = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Verb")));
             let noun = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Noun")));
@@ -1460,16 +1463,25 @@ export class Norology {
                 verb = verb.filter(word => word.word.includes("question") || word.word.includes("suspect") || word.word.includes("distrust"));
             }
             let selectedVerb = verb[Math.floor(Math.random() * verb.length)]?.word || "does";
-            let selectedNoun = noun[Math.floor(Math.random() * noun.length)]?.word || "something"; 
+            let selectedNoun = noun[Math.floor(Math.random() * noun.length)]?.word || "something";
             let selectedAdjective = adjective[Math.floor(Math.random() * adjective.length)]?.word || "good";
             let selectedConjunction = conjunction[Math.floor(Math.random() * conjunction.length)]?.word || "and";
 
             return { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction };
         };
-
-        let replys = '';
-        await generatePersonalizedReply(query, user).then(reply => { replys = reply });
-        return replys;
+        const getReplyUntilValid = async (query, user) => {
+            let reply = '';
+            while (!reply.trim()) {
+                reply = await generatePersonalizedReply(query, user);
+            }
+            return reply;
+        };
+        return await getReplyUntilValid(query, user) || 'Sorry but I am not understand!';
     }
+    async Evalatue() {
 
+    }
+    async Use() {
+
+    }
 }
