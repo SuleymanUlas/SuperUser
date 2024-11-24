@@ -53,7 +53,7 @@ export async function SU_QUERY(DataSU, User, Query, Reply, filename) {
             }, User);
             return replysreturn;
         }
-    } catch { return Reply }
+    } catch (err){console.log(err); return Reply }
 }
 async function handleUserData(User, Query) {
     await processUserInformation(Query, User);
