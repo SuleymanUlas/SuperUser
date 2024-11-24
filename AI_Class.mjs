@@ -9,6 +9,8 @@ import EventEmitter from 'node:events';
 import path from 'path';
 import { spawn } from 'child_process';
 import nlp from 'compromise';
+import { faker } from '@faker-js/faker';
+import * as math from 'mathjs';
 class MyEmitter extends EventEmitter { }; const myEmitter = new MyEmitter();
 const mimes = [{ ext: "pdf", desc: "Portable Document Format File" }, { ext: "jpg", desc: "JPEG Image" }, { ext: "jpeg", desc: "JPEG Image" }, { ext: "png", desc: "Portable Network Graphics Image" }, { ext: "gif", desc: "Graphics Interchange Format Image" }, { ext: "html", desc: "HyperText Markup Language" }, { ext: "txt", desc: "Text File" }, { ext: "csv", desc: "Comma Separated Values" }, { ext: "zip", desc: "ZIP Archive" }, { ext: "mp3", desc: "MP3 Audio" }, { ext: "mp4", desc: "MPEG-4 Video" }, { ext: "json", desc: "JavaScript Object Notation" }, { ext: "xml", desc: "Extensible Markup Language" }, { ext: "css", desc: "Cascading Style Sheets" }, { ext: "js", desc: "JavaScript File" }, { ext: "xls", desc: "Microsoft Excel Spreadsheet" }, { ext: "xlsx", desc: "Microsoft Excel Open XML Spreadsheet" }, { ext: "ppt", desc: "Microsoft PowerPoint Presentation" }, { ext: "pptx", desc: "Microsoft PowerPoint Open XML Presentation" }, { ext: "doc", desc: "Microsoft Word Document" }, { ext: "docx", desc: "Microsoft Word Open XML Document" }, { ext: "avi", desc: "Audio Video Interleave File" }, { ext: "mov", desc: "Apple QuickTime Movie" }, { ext: "ogg", desc: "Ogg Media File" }, { ext: "flv", desc: "Flash Video" }, { ext: "wav", desc: "Waveform Audio File" }];
 const elementsList = [{ element: "a", description: "<a> - hyperlink" }, { element: "abbr", description: "<abbr> - abbreviation" }, { element: "address", description: "<address> - contact information" }, { element: "area", description: "<area> - image map area" }, { element: "article", description: "<article> - independent content" }, { element: "aside", description: "<aside> - side content" }, { element: "audio", description: "<audio> - audio content" }, { element: "b", description: "<b> - bold text" }, { element: "base", description: "<base> - base URL" }, { element: "bdi", description: "<bdi> - bidirectional isolation" }, { element: "bdo", description: "<bdo> - bidirectional override" }, { element: "blockquote", description: "<blockquote> - block quotation" }, { element: "body", description: "<body> - document body" }, { element: "br", description: "<br> - line break" }, { element: "button", description: "<button> - clickable button" }, { element: "canvas", description: "<canvas> - drawing area" }, { element: "caption", description: "<caption> - table caption" }, { element: "cite", description: "<cite> - reference" }, { element: "code", description: "<code> - code snippet" }, { element: "col", description: "<col> - column in a table" }, { element: "colgroup", description: "<colgroup> - group of columns" }, { element: "data", description: "<data> - machine-readable data" }, { element: "datalist", description: "<datalist> - predefined options" }, { element: "dd", description: "<dd> - description details" }, { element: "del", description: "<del> - deleted text" }, { element: "details", description: "<details> - additional details" }, { element: "dialog", description: "<dialog> - dialog box" }, { element: "div", description: "<div> - section" }, { element: "dl", description: "<dl> - description list" }, { element: "dt", description: "<dt> - term in a description list" }, { element: "em", description: "<em> - emphasized text" }, { element: "embed", description: "<embed> - embedded content" }, { element: "fieldset", description: "<fieldset> - group of related elements" }, { element: "figcaption", description: "<figcaption> - caption for a figure" }, { element: "figure", description: "<figure> - self-contained content" }, { element: "footer", description: "<footer> - footer for a section" }, { element: "form", description: "<form> - form for user input" }, { element: "head", description: "<head> - document metadata" }, { element: "header", description: "<header> - header for a section" }, { element: "hr", description: "<hr> - horizontal rule" }, { element: "html", description: "<html> - HTML document" }, { element: "i", description: "<i> - italic text" }, { element: "iframe", description: "<iframe> - inline frame" }, { element: "img", description: "<img> - image" }, { element: "input", description: "<input> - user input field" }, { element: "ins", description: "<ins> - inserted text" }, { element: "kbd", description: "<kbd> - keyboard input" }, { element: "label", description: "<label> - label for an input" }, { element: "legend", description: "<legend> - caption for a fieldset" }, { element: "li", description: "<li> - list item" }, { element: "link", description: "<link> - external resource link" }, { element: "main", description: "<main> - main content" }, { element: "map", description: "<map> - image map" }, { element: "mark", description: "<mark> - highlighted text" }, { element: "meta", description: "<meta> - metadata" }, { element: "meter", description: "<meter> - measurement" }, { element: "nav", description: "<nav> - navigation links" }, { element: "noscript", description: "<noscript> - alternative content" }, { element: "object", description: "<object> - embedded object" }, { element: "ol", description: "<ol> - ordered list" }, { element: "optgroup", description: "<optgroup> - group of options" }, { element: "option", description: "<option> - option in a select list" }, { element: "p", description: "<p> - paragraph" }, { element: "param", description: "<param> - parameter for an object" }, { element: "picture", description: "<picture> - responsive image" }, { element: "pre", description: "<pre> - preformatted text" }, { element: "progress", description: "<progress> - progress indicator" }, { element: "q", description: "<q> - short quotation" }, { element: "rb", description: "<rb> - ruby base" }, { element: "rp", description: "<rp> - ruby parentheses" }, { element: "rt", description: "<rt> - ruby text" }, { element: "rtc", description: "<rtc> - ruby text container" }, { element: "s", description: "<s> - strikethrough text" }, { element: "samp", description: "<samp> - sample output" }, { element: "script", description: "<script> - script" }, { element: "section", description: "<section> - thematic grouping" }, { element: "select", description: "<select> - dropdown list" }, { element: "small", description: "<small> - small text" }, { element: "source", description: "<source> - media source" }, { element: "span", description: "<span> - inline section" }, { element: "strong", description: "<strong> - strong importance" }, { element: "style", description: "<style> - CSS styles" }, { element: "sub", description: "<sub> - subscript" }, { element: "summary", description: "<summary> - summary of a details element" }, { element: "sup", description: "<sup> - superscript" }, { element: "table", description: "<table> - table" }, { element: "tbody", description: "<tbody> - table body" }, { element: "td", description: "<td> - table cell" }, { element: "textarea", description: "<textarea> - multi-line text input" }, { element: "tfoot", description: "<tfoot> - table footer" }, { element: "th", description: "<th> - table header cell" }, { element: "thead", description: "<thead> - table header" }, { element: "time", description: "<time> - time or date" }, { element: "title", description: "<title> - document title" }, { element: "tr", description: "<tr> - table row" }, { element: "track", description: "<track> - text tracks for media" }, { element: "u", description: "<u> - underline text" }, { element: "ul", description: "<ul> - unordered list" }, { element: "var", description: "<var> - variable" }, { element: "video", description: "<video> - video content" }, { element: "wbr", description: "<wbr> - word break opportunity" }]
@@ -17,7 +19,7 @@ const browser = await puppeteer.launch({ headless: true }); const page = await b
 export class Bootfunc {
     async File(SearchF, fmime) {
         const ceuser = new Code_Edit_Used;
-        const apiKey = ceuser.UserData('Default', { prp: 'read', param: 'apikey' }) || console.log('no api key'); const searchEngineId = ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' }) || console.log('no search engine id');
+        const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }) || console.log('no api key'); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' }) || console.log('no search engine id');
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&q=${SearchF}`;
         const flinkm = [];
         try {
@@ -29,7 +31,7 @@ export class Bootfunc {
                 for (const item of items) {
                     try {
                         const link = item.link;
-                        await page.goto(link, { waitUntil: 'domcontentloaded', timeout: 0 });
+                        await page.goto(link, { waitUntil: 'domcontentloaded', timeout: 1000 });
                         const hrefsOnPage = await page.$$eval('a', anchors => anchors.map(a => a.href));
                         allLinks.push(...hrefsOnPage);
                     } catch (error) { continue }
@@ -55,17 +57,16 @@ export class Bootfunc {
         return flinkm;
     }
     async Weather(from) {
-        let link = `https://www.google.com/search?q=${from}`;
+        let link = `https://www.google.com/search?q=${from} weather`;
         await page.goto(link, { waitUntil: 'domcontentloaded', timeout: 0 });
         const textValue = await page.$eval('.UQt4rd', el => el.innerText);
         if (textValue) {
             return textValue;
         }
-        return null;
     }
     async getSumarizeINF(SearchG, property) {
         const ceuser = new Code_Edit_Used;
-        const apiKey = ceuser.UserData('Default', { prp: 'read', param: 'apikey' }) || console.log('no api key'); const searchEngineId = ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' }) || console.log('no search engine id');
+        const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }) || console.log('no api key'); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' }) || console.log('no search engine id');
         let All = [];
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&q=${SearchG}`;
         const response = await fetch(url);
@@ -79,7 +80,7 @@ export class Bootfunc {
     }
     async GoogleDATA(SearchG, Element, Setting) {
         const ceuser = new Code_Edit_Used;
-        const apiKey = ceuser.UserData('Default', { prp: 'read', param: 'apikey' }) || console.log('no api key'); const searchEngineId = ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' }) || console.log('no search engine id');
+        const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }) || console.log('no api key'); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' }) || console.log('no search engine id');
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&q=${SearchG}`;
         try {
             let num = '';
@@ -1225,7 +1226,7 @@ export class CreateQuery {
             default: mood = 'Neutral'; break;
         }
         const wordsData = await this.loadWordData();
-        const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await this.selectWordsBasedOnQueryAndMood(querymemory, mood, wordsData,User);
+        const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await this.selectWordsBasedOnQueryAndMood(querymemory, mood, wordsData, User);
         let question = await this.generateQuestion(querymemory, User, selectedVerb, selectedNoun, selectedAdjective, selectedConjunction);
 
         return question;
@@ -1245,7 +1246,7 @@ export class CreateQuery {
         }
         return value || 'something';
     }
-    async selectWordsBasedOnQueryAndMood(query, mood, wordsData,User) {
+    async selectWordsBasedOnQueryAndMood(query, mood, wordsData, User) {
         const nlpResult = await nlpUsage(query);
         const extractedMeanings = nlpResult.extracted_meanings;
         let verb = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Verb")));
@@ -1267,7 +1268,7 @@ export class CreateQuery {
             } else if (mood === "Sad") {
                 extractedAdjectives.push("sad");
             }
-    
+
             if (extracted.methods) {
                 extractedAdjectives.push(...extracted.methods);
             }
@@ -1277,13 +1278,13 @@ export class CreateQuery {
             noun = noun.filter(word => word.word.includes("workout") || word.word.includes("meal"));
             adjective = adjective.filter(word => word.word.includes("healthy"));
         }
-    
+
         if (query.includes("career") || query.includes("job")) {
             verb = verb.filter(word => word.word.includes("work") || word.word.includes("advance"));
             noun = noun.filter(word => word.word.includes("task") || word.word.includes("project"));
             adjective = adjective.filter(word => word.word.includes("successful"));
         }
-    
+
         if (mood === 'Happy') {
             adjective = adjective.filter(word => word.word.includes("happy"));
             verb = verb.filter(word => word.word.includes("celebrate"));
@@ -1304,7 +1305,7 @@ export class CreateQuery {
         let selectedNoun = noun.length > 0 ? noun[Math.floor(Math.random() * noun.length)]?.word : "something";
         let selectedAdjective = adjective.length > 0 ? adjective[Math.floor(Math.random() * adjective.length)]?.word : "good";
         let selectedConjunction = conjunction.length > 0 ? conjunction[Math.floor(Math.random() * conjunction.length)]?.word : "and";
-    
+
         return { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction };
     }
     async loadWordData() {
@@ -1314,9 +1315,9 @@ export class CreateQuery {
     }
 }
 const nlpUsage = async (Query) => {
-    const query_doc = nlp(Query); 
-    const sentences = query_doc.sentences().out('array'); 
-    const extracted_meanings = []; 
+    const query_doc = nlp(Query);
+    const sentences = query_doc.sentences().out('array');
+    const extracted_meanings = [];
     for (let sentence of sentences) {
         const sentence_doc = nlp(sentence);
         const query_verbs = sentence_doc.verbs().out('array');
@@ -1402,6 +1403,7 @@ export class Norology {
         return await this.Parse(Query, User, mapdata);
     }
     async Parse(query, user, mapdata) {
+        const bot = new Bootfunc;
         let querymemory = '';
         const mems = new Memory;
         const meMory = await mems.Memory({ process: 'read' }, user);
@@ -1428,7 +1430,6 @@ export class Norology {
             let wordsData = await loadWordData();
             let data = await ceu.UserData(user, { prp: 'all' });
             const botInfo = {};
-
             const knownParams = [
                 "name", "age", "job", "location", "hobby", "email", "gender", "education",
                 "phone", "socialMedia", "maritalStatus", "languages", "skills", "favoriteFood",
@@ -1437,64 +1438,244 @@ export class Norology {
             knownParams.forEach(param => {
                 botInfo[`bot${param.charAt(0).toUpperCase() + param.slice(1)}`] = data?.[param] || 'none';
             });
-
-            const fe = new Fell();
-            const feData = await fe.AllData();
-            const maxValue = Math.max(...Object.values(feData));
-            const maxKey = Object.keys(feData).find(key => feData[key] === maxValue);
-            let mood = '';
-            switch (maxKey) {
-                case 'Hqx': mood = 'Happy'; break;
-                case 'Aqx': mood = 'Angry'; break;
-                case 'Sqx': mood = 'Scared'; break;
-                case 'Saqx': mood = 'Sad'; break;
-                case 'Suqx': mood = 'Suspicious'; break;
-                case 'Default': mood = 'Neutral'; break;
-                default: mood = 'Neutral'; break;
-            }
-
-            const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await selectWordsBasedOnQueryAndMood(query, mood, wordsData, mapdata);
-            let dynamicComplement = selectedNoun;
-            let templateChoice = [];
-
-            if (query.includes('health') || query.includes('fitness')) {
-                templateChoice = healthReplyTemplates;
-            } else if (query.includes('diet') || query.includes('nutrition')) {
-                templateChoice = dietReplyTemplates;
-            } else if (query.includes('career') || query.includes('job') || query.includes('work')) {
-                templateChoice = careerReplyTemplates;
-            } else if (query.includes('productivity') || query.includes('work ethic') || query.includes('tasks')) {
-                templateChoice = workReplyTemplates;
-            } else if (query.includes('mood') || query.includes('feel') || query.includes('emotion')) {
-                templateChoice = emotionalReplyTemplates;
-            } else if (query.includes('support') || query.includes('help') || query.includes('assistance')) {
-                templateChoice = supportReplyTemplates;
-            } else {
-                templateChoice = Math.random() > 0.5 ? generalReplyTemplates : personalReplyTemplates;
-            }
-
-            const template = templateChoice.length > 0 ? templateChoice[Math.floor(Math.random() * templateChoice.length)] : "{subject} {verb} {complement}.";
-            const placeholders = ["{subject}", "{verb}", "{complement}", "{adjective}", "{conjunction}"];
-            let reply = template;
-
-            for (let placeholder of placeholders) {
-                while (reply.includes(placeholder)) {
-                    if (placeholder === "{subject}") {
-                        reply = reply.replace(placeholder, data.username || "Bro");
-                    } else if (placeholder === "{verb}") {
-                        reply = reply.replace(placeholder, await getSafeString(selectedVerb));
-                    } else if (placeholder === "{complement}") {
-                        reply = reply.replace(placeholder, await getSafeString(dynamicComplement));
-                    } else if (placeholder === "{adjective}") {
-                        reply = reply.replace(placeholder, await getSafeString(selectedAdjective));
-                    } else if (placeholder === "{conjunction}") {
-                        reply = reply.replace(placeholder, await getSafeString(selectedConjunction));
+            const weatherQueryRegex = /(how (is|do|can|would|should) the weather|what (is|are) the weather|current weather|weather forecast|tell me the weather|what's the weather like|how's the weather|how is the weather in)/i;
+            const googleQueryRegex = /(how to|what is|explain|define|describe|tell me about)/i;
+            const fileLinkQueryRegex = /\b(find|get|download|provide|share|give|show)\s+(me\s+)?(a\s+)?(link|file)\s+(for|to)?(.+)/i;
+            const mathQueryRegex = /\b(solve|calculate|how much is|evaluate|integral|logarithm|simplify|solve equation|tangent|sine|cosine|find derivative)\s+(.*)\b/i;
+            const geometryQueryRegex = /\b(hypotenuse|triangle area|circle area|circle perimeter|perimeter|area|length)\s+(.*)\b/i;
+            if (mathQueryRegex.test(query)) {
+                const mathExpression = query.replace(mathQueryRegex, '$2').trim(); 
+                let result;
+                try {
+                    if (query.includes('integral') || query.includes('integrate')) {
+                        result = math.integrate(mathExpression, 'x'); 
+                    } else if (query.includes('derivative') || query.includes('find derivative')) {
+                        result = math.derivative(mathExpression, 'x'); 
+                    } else if (query.includes('logarithm') || query.includes('log')) {
+                        result = math.log(mathExpression); 
+                    } else if (query.includes('sine') || query.includes('sin')) {
+                        result = math.sin(mathExpression);
+                    } else if (query.includes('cosine') || query.includes('cos')) {
+                        result = math.cos(mathExpression);
+                    } else if (query.includes('tangent') || query.includes('tan')) {
+                        result = math.tan(mathExpression);
+                    } else if (query.includes('exponential') || query.includes('power')) {
+                        result = math.exp(mathExpression); 
+                    } else if (query.includes('solve equation') || query.includes('equation')) {
+                        const solutions = math.solve(mathExpression);
+                        result = solutions;
+                    } else {
+                        result = math.evaluate(mathExpression);
+                    }
+                } catch (err) {
+                    result = 'Sorry, I couldn\'t solve that expression.';
+                }
+                const mathSentences = result.toString().split('.').filter(sentence => sentence.trim() !== '');
+                const selectedMathSentence = mathSentences[Math.floor(Math.random() * mathSentences.length)] || result;
+                return `The result of your calculation for "${mathExpression}" is: ${selectedMathSentence}`;
+            } 
+            else if (geometryQueryRegex.test(query)) {
+                const geometryExpression = query.replace(geometryQueryRegex, '$2').trim(); 
+                let result;
+                try {
+                    if (query.includes('hypotenuse')) {
+                        const sides = geometryExpression.split(' ').map(Number);
+                        if (sides.length === 2) {
+                            const [a, b] = sides;
+                            result = math.sqrt(math.add(math.square(a), math.square(b)));
+                        } else {
+                            result = 'Please provide two side lengths of the triangle.';
+                        }
+                    }
+                    else if (query.includes('circle perimeter') || query.includes('perimeter')) {
+                        const radius = parseFloat(geometryExpression);
+                        if (isNaN(radius)) {
+                            result = 'Please provide the radius of the circle.';
+                        } else {
+                            result = math.multiply(2, math.pi, radius);
+                        }
+                    }
+                    else if (query.includes('circle area') || query.includes('area')) {
+                        const radius = parseFloat(geometryExpression);
+                        if (isNaN(radius)) {
+                            result = 'Please provide the radius of the circle.';
+                        } else {
+                            result = math.pi * math.square(radius);
+                        }
+                    }
+                    else if (query.includes('triangle area')) {
+                        const [base, height] = geometryExpression.split(' ').map(Number);
+                        if (base && height) {
+                            result = math.multiply(0.5, base, height);
+                        } else {
+                            result = 'Please provide the base and height of the triangle.';
+                        }
+                    }
+                    else {
+                        result = 'I could not understand the geometric expression.';
+                    }
+                } catch (err) {
+                    result = 'Sorry, I couldn\'t solve that geometric expression.';
+                }
+                const geometrySentences = result.toString().split('.').filter(sentence => sentence.trim() !== '');
+                const selectedGeometrySentence = geometrySentences[Math.floor(Math.random() * geometrySentences.length)] || result;
+                return `The result of your geometry calculation for "${geometryExpression}" is: ${selectedGeometrySentence}`;
+            } 
+            else if (weatherQueryRegex.test(query)) {
+                try {
+                    const location = data.userlocation || '';
+                    const weatherData = await bot.Weather(location);
+                    const weatherSentences = weatherData.split('.').filter(sentence => sentence.trim() !== '');
+                    const selectedWeatherSentence = weatherSentences[Math.floor(Math.random() * weatherSentences.length)] || weatherData;
+                    return `The weather in ${location || 'your location'} is currently: \n${selectedWeatherSentence}.`;
+                }
+                catch {
+                    return 'Where are you from?';
+                }
+            } 
+            else if (fileLinkQueryRegex.test(query)) {
+                let matchedFile = query.match(fileLinkQueryRegex);
+                if (matchedFile && matchedFile.length > 0) {
+                    let fileType = matchedFile[matchedFile.length - 1].toLowerCase();
+                    const refile = await bot.File(query, fileType);
+                    let replacement = refile.length > 1 ? refile.join(', ') : refile[0];
+                    return `Here are the links I found for ${fileType} files: ${replacement}`;
+                }
+            } 
+            else if (googleQueryRegex.test(query)) {
+                const replacequestion = new RegExp(`^${query}`, 'g');
+                let googleSummary = await bot.GoogleDATA(query, 'body', 'text');
+                googleSummary = googleSummary.replace(replacequestion, '') || '{complement}';
+                const googleSentences = googleSummary.split('.').filter(sentence => sentence.trim() !== '');
+            
+                const fe = new Fell();
+                const feData = await fe.AllData();
+                const maxValue = Math.max(...Object.values(feData));
+                const maxKey = Object.keys(feData).find(key => feData[key] === maxValue);
+                let mood = '';
+                switch (maxKey) {
+                    case 'Hqx': mood = 'Happy'; break;
+                    case 'Aqx': mood = 'Angry'; break;
+                    case 'Sqx': mood = 'Scared'; break;
+                    case 'Saqx': mood = 'Sad'; break;
+                    case 'Suqx': mood = 'Suspicious'; break;
+                    case 'Default': mood = 'Neutral'; break;
+                    default: mood = 'Neutral'; break;
+                }
+            
+                let templateChoice = generalReplyTemplates;
+                if (query.includes('health') || query.includes('fitness')) {
+                    templateChoice = healthReplyTemplates;
+                } else if (query.includes('diet') || query.includes('nutrition')) {
+                    templateChoice = dietReplyTemplates;
+                } else if (query.includes('career') || query.includes('job')) {
+                    templateChoice = careerReplyTemplates;
+                } else if (query.includes('work') || query.includes('productivity')) {
+                    templateChoice = workReplyTemplates;
+                } else if (query.includes('emotion') || query.includes('mood')) {
+                    templateChoice = emotionalReplyTemplates;
+                } else if (query.includes('support') || query.includes('help')) {
+                    templateChoice = supportReplyTemplates;
+                } else {
+                    templateChoice = Math.random() > 0.5 ? personalReplyTemplates : generalReplyTemplates;
+                }
+            
+                const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await selectWordsBasedOnQueryAndMood(query, mood, wordsData, mapdata);
+                let dynamicComplement = selectedNoun;
+                const template = templateChoice[Math.floor(Math.random() * templateChoice.length)];
+                let reply = template;
+                const placeholders = ["{subject}", "{verb}", "{complement}", "{adjective}", "{conjunction}"];
+            
+                for (let placeholder of placeholders) {
+                    while (reply.includes(placeholder)) {
+                        if (placeholder === "{subject}") {
+                            reply = reply.replace(placeholder, data.username || "Bro");
+                        } else if (placeholder === "{verb}") {
+                            reply = reply.replace(placeholder, await getSafeString(selectedVerb));
+                        } else if (placeholder === "{complement}") {
+                            const selectedSentence = googleSentences[Math.floor(Math.random() * googleSentences.length)] || googleSummary;
+                            reply = reply.replace(placeholder, await getSafeString(selectedSentence || dynamicComplement));
+                        } else if (placeholder === "{adjective}") {
+                            reply = reply.replace(placeholder, await getSafeString(selectedAdjective));
+                        } else if (placeholder === "{conjunction}") {
+                            reply = reply.replace(placeholder, await getSafeString(selectedConjunction));
+                        }
                     }
                 }
-            }
-            return reply;
-        }
+            
+                return reply;
+            }            
+            else {
+                let wordsData = await loadWordData();
+                let data = await ceu.UserData(user, { prp: 'all' });
+                const botInfo = {};
+                knownParams.forEach(param => {
+                    botInfo[`bot${param.charAt(0).toUpperCase() + param.slice(1)}`] = data?.[param] || 'none';
+                });
 
+                const fe = new Fell();
+                const feData = await fe.AllData();
+                const maxValue = Math.max(...Object.values(feData));
+                const maxKey = Object.keys(feData).find(key => feData[key] === maxValue);
+                let mood = '';
+                switch (maxKey) {
+                    case 'Hqx': mood = 'Happy'; break;
+                    case 'Aqx': mood = 'Angry'; break;
+                    case 'Sqx': mood = 'Scared'; break;
+                    case 'Saqx': mood = 'Sad'; break;
+                    case 'Suqx': mood = 'Suspicious'; break;
+                    case 'Default': mood = 'Neutral'; break;
+                    default: mood = 'Neutral'; break;
+                }
+                const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await selectWordsBasedOnQueryAndMood(query, mood, wordsData, mapdata);
+                let dynamicComplement = selectedNoun;
+                let templateChoice = [];
+                if (query.includes('health') || query.includes('fitness')) {
+                    templateChoice = healthReplyTemplates;
+                } else if (query.includes('diet') || query.includes('nutrition')) {
+                    templateChoice = dietReplyTemplates;
+                } else if (query.includes('career') || query.includes('job') || query.includes('work')) {
+                    templateChoice = careerReplyTemplates;
+                } else if (query.includes('productivity') || query.includes('work ethic') || query.includes('tasks')) {
+                    templateChoice = workReplyTemplates;
+                } else if (query.includes('mood') || query.includes('feel') || query.includes('emotion')) {
+                    templateChoice = emotionalReplyTemplates;
+                } else if (query.includes('support') || query.includes('help') || query.includes('assistance')) {
+                    templateChoice = supportReplyTemplates;
+                } else {
+                    templateChoice = Math.random() > 0.5 ? generalReplyTemplates : personalReplyTemplates;
+                }
+                const template = templateChoice.length > 0 ? templateChoice[Math.floor(Math.random() * templateChoice.length)] : "{subject} {verb} {complement}.";
+                const placeholders = ["{subject}", "{verb}", "{complement}", "{adjective}", "{conjunction}"];
+                let reply = template;
+
+                for (let placeholder of placeholders) {
+                    while (reply.includes(placeholder)) {
+                        if (placeholder === "{subject}") {
+                            reply = reply.replace(placeholder, data.username || "Bro");
+                        } else if (placeholder === "{verb}") {
+                            reply = reply.replace(placeholder, await getSafeString(selectedVerb));
+                        } else if (placeholder === "{complement}") {
+                            reply = reply.replace(placeholder, await getSafeString(dynamicComplement));
+                        } else if (placeholder === "{adjective}") {
+                            reply = reply.replace(placeholder, await getSafeString(selectedAdjective));
+                        } else if (placeholder === "{conjunction}") {
+                            reply = reply.replace(placeholder, await getSafeString(selectedConjunction));
+                        }
+                    }
+                }
+                return reply;
+            }
+        }
+        async function getSafeString(value) {
+            if (typeof value === 'object' && value !== null) {
+                if (value && value.toString) {
+                    return value.toString();
+                }
+                return 'something';
+            }
+            return value || 'something';
+        }
         async function getSafeString(value) {
             if (typeof value === 'object' && value !== null) {
                 if (value && value.toString) {
@@ -1552,7 +1733,7 @@ export class Norology {
             if (requestedParam) {
                 const isTalkingAboutSelf = /^(my|i am|i\'m|my name|i'm)/.test(queryLower);
                 const isTalkingAboutUser = /^(your|you|are you|do you|what is your)/.test(queryLower);
-                const udata = await ceu.UserData(user, {prp: 'all'});
+                const udata = await ceu.UserData(user, { prp: 'all' });
                 let formattedParam = requestedParam.charAt(0).toUpperCase() + requestedParam.slice(1);
                 if (isTalkingAboutUser) {
                     return {
@@ -1569,24 +1750,19 @@ export class Norology {
                         selectedConjunction: "and"
                     };
                 }
+                return
             }
 
             return { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction };
         };
-
         const getReplyUntilValid = async (query, user) => {
             let reply = '';
+
             while (!reply.trim()) {
                 reply = await generatePersonalizedReply(query, user);
             }
             return reply;
         };
         return await getReplyUntilValid(query, user) || 'Sorry but I am not understand!';
-    }
-    async Evalatue() {
-
-    }
-    async Use() {
-
     }
 }

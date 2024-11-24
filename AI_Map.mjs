@@ -79,7 +79,7 @@ const nlpUsage = async (Query, User) => {
     };
 };
 export const Map = async (Query, Reply, Status, User) => {
-    const qr = { q: await sufunc.SummaryRatio('What can I do?', Query).res || Query };
+    const qr = { q: Query };
     const data = await nlpUsage(qr.q, User); let reply = '';
     if (data) {
         reply = await norology.Analayzing(Query.toLowerCase().replace(/([?!\.])(?!\s)/g, ' $1'), User, data.extracted_meanings);
