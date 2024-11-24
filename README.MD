@@ -112,6 +112,9 @@ In this example:
 - **`fetchFileFromGitHub`** is called to retrieve the latest content for each file.
 - If the file is successfully fetched, it's written to the local system using `fsp.writeFile`.
 - If all files are updated successfully, the system is restarted after a delay.
+<a href="https://discord.gg/Yat4Nmgn">
+    <img src="https://static.cdnlogo.com/logos/d/64/discord.png" width="10%" style="border: none; outline: none;">
+</a>
 </pre>
-
 </body> </html> 
+
