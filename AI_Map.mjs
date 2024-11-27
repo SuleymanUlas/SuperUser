@@ -1,6 +1,6 @@
 import nlp from 'compromise';
 import { Code_Edit_Used, Job, Bootfunc, Control, Simulation, Fell, Train, Memory, Norology } from './AI_Class.mjs';
-import { SUFunc } from './AI_Func.mjs'; 
+import { SUFunc } from './AI_Func.mjs';
 const ceu = new Code_Edit_Used; const job = new Job; const sufunc = new SUFunc; const boot = new Bootfunc;
 const fell = new Fell; const control = new Control; const train = new Train; const memory = new Memory;
 const norology = new Norology; const simulation = new Simulation;
@@ -14,75 +14,101 @@ const mimes = [{ ext: "pdf", desc: "Portable Document Format File" }, { ext: "jp
  * ? Usage example => sentences 
  */
 const nlpUsage = async (Query, User) => {
-    let feel = await Return_Fell(User); // Get user's feeling or state
-    const query_doc = nlp(Query); // Process the entire query using Compromise NLP
-    const sentences = query_doc.sentences().out('array'); // Split into individual sentences
-    const extracted_meanings = []; // To store the extracted meanings
-
-    // Iterate over each sentence to extract information
-    for (let sentence of sentences) {
-        const sentence_doc = nlp(sentence);
-        const query_verbs = sentence_doc.verbs().out('array');
-
-        // Extract people (subjects)
-        let persons = [];
-        sentence_doc.people().forEach(person => {
-            persons.push(person.text());
-        });
-
-        // Extract places (locations)
-        let places = [];
-        sentence_doc.places().forEach(place => {
-            places.push(place.text());
-        });
-
-        // Extract objects (direct objects)
+    try {
+        const query_doc = nlp(Query); 
+        const sentences = query_doc.sentences().out('array'); 
+        const extracted_meanings = []; 
         let objects = [];
-        sentence_doc.match('#Noun').forEach(noun => {
-            objects.push(noun.text());
-        });
-
-        // Extract time-related information (e.g. "in the morning", "yesterday")
+        let places = [];
+        let persons = [];
         let time = [];
-        sentence_doc.match('#Date').forEach(date => {
-            time.push(date.text());
-        });
-
-        // Extract reasons (e.g. "because he was late")
         let reasons = [];
-        sentence_doc.match('because').forEach(match => {
-            reasons.push(match.text());
-        });
-        // Extract methods (How someone is doing something)
         let methods = [];
-        sentence_doc.match('#Adverb').forEach(adverb => {
-            methods.push(adverb.text());
-        });
-
-        const verb_query = query_verbs.length > 0 ? query_verbs.join(' ') : "no verb detected";
-        // If verbs are detected, extract meaning
-        if (verb_query !== "no verb detected") {
-            extracted_meanings.push({
+        let adjectives = [];
+        let verbs = [];
+        let negations = [];
+        for (let sentence of sentences) {
+            const sentence_doc = nlp(sentence);
+            sentence_doc.people().forEach(person => {
+                persons.push(person.text());
+            });
+            sentence_doc.match('#Noun').forEach(noun => {
+                const nounText = noun.text();
+                if (nounText && !objects.includes(nounText)) {
+                    objects.push(nounText);
+                }
+            });
+            sentence_doc.places().forEach(place => {
+                places.push(place.text());
+            });
+            sentence_doc.match('#Date').forEach(date => {
+                time.push(date.text());
+            });
+            sentence_doc.match('because').forEach(match => {
+                reasons.push(match.text());
+            });
+            sentence_doc.match('#Adverb').forEach(adverb => {
+                methods.push(adverb.text());
+            });
+            sentence_doc.match('#Adjective').forEach(adj => {
+                adjectives.push(adj.text());
+            });
+            sentence_doc.verbs().forEach(verb => {
+                verbs.push(verb.text());
+            });
+            sentence_doc.match('not|never|nothing').forEach(negation => {
+                negations.push(negation.text());
+            });
+            const sentence_data = {
                 type: 'query',
-                verb: verb_query,
-                person: persons,
-                places: places,
+                persons: persons,
                 objects: objects,
+                places: places ,
                 time: time,
                 reasons: reasons,
                 methods: methods,
-            });
+                adjectives: adjectives,
+                verbs: verbs,
+                negations: negations,
+            };
+            const valid_data = Object.keys(sentence_data).some(key => sentence_data[key]);
+            if (valid_data) {
+                extracted_meanings.push(sentence_data);
+            }
+            objects = [];
+            places = [];
+            persons = [];
+            time = [];
+            reasons = [];
+            methods = [];
+            adjectives = [];
+            verbs = [];
+            negations = [];
         }
+        return {
+            extracted_meanings: extracted_meanings
+        };
+    } catch {
+        return {
+            type: 'query',
+            persons: undefined,
+            objects: undefined,
+            places: undefined,
+            time: undefined,
+            reasons: undefined,
+            methods: undefined,
+            adjectives: undefined,
+            verbs: undefined,
+            negations: undefined,
+        };
     }
-    return {
-        extracted_meanings: extracted_meanings
-    };
 };
 export const Map = async (Query, Reply, Status, User) => {
     const qr = { q: Query };
     const data = await nlpUsage(qr.q, User); let reply = '';
+    console.log(data)
     if (data) {
-        reply = await norology.Analayzing(Query.toLowerCase().replace(/([?!\.])(?!\s)/g, ' $1'), User, data.extracted_meanings);
+        reply = await norology.Analayzing(Query.toLowerCase().replaceAll(/\s([?!\.,;:])$/g, '$1').replaceAll(/([+\-*/=%^&|<>!])/g, ' $1 '), User, data.extracted_meanings);
     }
     return reply;
 }

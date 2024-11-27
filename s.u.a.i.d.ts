@@ -1,6 +1,3 @@
-// s_u_ai.d.ts
-// s.u-ai.d.ts
-
 declare module 's.u.a.i' {
     export class SUPER_USER_AI {
       AI(query: string): Promise<string>;

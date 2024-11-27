@@ -10,7 +10,8 @@ import path from 'path';
 import { spawn } from 'child_process';
 import nlp from 'compromise';
 import { faker } from '@faker-js/faker';
-import * as math from 'mathjs';
+import * as mathjs from 'mathjs';
+import nerdamer from 'nerdamer/all.js';
 class MyEmitter extends EventEmitter { }; const myEmitter = new MyEmitter();
 const mimes = [{ ext: "pdf", desc: "Portable Document Format File" }, { ext: "jpg", desc: "JPEG Image" }, { ext: "jpeg", desc: "JPEG Image" }, { ext: "png", desc: "Portable Network Graphics Image" }, { ext: "gif", desc: "Graphics Interchange Format Image" }, { ext: "html", desc: "HyperText Markup Language" }, { ext: "txt", desc: "Text File" }, { ext: "csv", desc: "Comma Separated Values" }, { ext: "zip", desc: "ZIP Archive" }, { ext: "mp3", desc: "MP3 Audio" }, { ext: "mp4", desc: "MPEG-4 Video" }, { ext: "json", desc: "JavaScript Object Notation" }, { ext: "xml", desc: "Extensible Markup Language" }, { ext: "css", desc: "Cascading Style Sheets" }, { ext: "js", desc: "JavaScript File" }, { ext: "xls", desc: "Microsoft Excel Spreadsheet" }, { ext: "xlsx", desc: "Microsoft Excel Open XML Spreadsheet" }, { ext: "ppt", desc: "Microsoft PowerPoint Presentation" }, { ext: "pptx", desc: "Microsoft PowerPoint Open XML Presentation" }, { ext: "doc", desc: "Microsoft Word Document" }, { ext: "docx", desc: "Microsoft Word Open XML Document" }, { ext: "avi", desc: "Audio Video Interleave File" }, { ext: "mov", desc: "Apple QuickTime Movie" }, { ext: "ogg", desc: "Ogg Media File" }, { ext: "flv", desc: "Flash Video" }, { ext: "wav", desc: "Waveform Audio File" }];
 const elementsList = [{ element: "a", description: "<a> - hyperlink" }, { element: "abbr", description: "<abbr> - abbreviation" }, { element: "address", description: "<address> - contact information" }, { element: "area", description: "<area> - image map area" }, { element: "article", description: "<article> - independent content" }, { element: "aside", description: "<aside> - side content" }, { element: "audio", description: "<audio> - audio content" }, { element: "b", description: "<b> - bold text" }, { element: "base", description: "<base> - base URL" }, { element: "bdi", description: "<bdi> - bidirectional isolation" }, { element: "bdo", description: "<bdo> - bidirectional override" }, { element: "blockquote", description: "<blockquote> - block quotation" }, { element: "body", description: "<body> - document body" }, { element: "br", description: "<br> - line break" }, { element: "button", description: "<button> - clickable button" }, { element: "canvas", description: "<canvas> - drawing area" }, { element: "caption", description: "<caption> - table caption" }, { element: "cite", description: "<cite> - reference" }, { element: "code", description: "<code> - code snippet" }, { element: "col", description: "<col> - column in a table" }, { element: "colgroup", description: "<colgroup> - group of columns" }, { element: "data", description: "<data> - machine-readable data" }, { element: "datalist", description: "<datalist> - predefined options" }, { element: "dd", description: "<dd> - description details" }, { element: "del", description: "<del> - deleted text" }, { element: "details", description: "<details> - additional details" }, { element: "dialog", description: "<dialog> - dialog box" }, { element: "div", description: "<div> - section" }, { element: "dl", description: "<dl> - description list" }, { element: "dt", description: "<dt> - term in a description list" }, { element: "em", description: "<em> - emphasized text" }, { element: "embed", description: "<embed> - embedded content" }, { element: "fieldset", description: "<fieldset> - group of related elements" }, { element: "figcaption", description: "<figcaption> - caption for a figure" }, { element: "figure", description: "<figure> - self-contained content" }, { element: "footer", description: "<footer> - footer for a section" }, { element: "form", description: "<form> - form for user input" }, { element: "head", description: "<head> - document metadata" }, { element: "header", description: "<header> - header for a section" }, { element: "hr", description: "<hr> - horizontal rule" }, { element: "html", description: "<html> - HTML document" }, { element: "i", description: "<i> - italic text" }, { element: "iframe", description: "<iframe> - inline frame" }, { element: "img", description: "<img> - image" }, { element: "input", description: "<input> - user input field" }, { element: "ins", description: "<ins> - inserted text" }, { element: "kbd", description: "<kbd> - keyboard input" }, { element: "label", description: "<label> - label for an input" }, { element: "legend", description: "<legend> - caption for a fieldset" }, { element: "li", description: "<li> - list item" }, { element: "link", description: "<link> - external resource link" }, { element: "main", description: "<main> - main content" }, { element: "map", description: "<map> - image map" }, { element: "mark", description: "<mark> - highlighted text" }, { element: "meta", description: "<meta> - metadata" }, { element: "meter", description: "<meter> - measurement" }, { element: "nav", description: "<nav> - navigation links" }, { element: "noscript", description: "<noscript> - alternative content" }, { element: "object", description: "<object> - embedded object" }, { element: "ol", description: "<ol> - ordered list" }, { element: "optgroup", description: "<optgroup> - group of options" }, { element: "option", description: "<option> - option in a select list" }, { element: "p", description: "<p> - paragraph" }, { element: "param", description: "<param> - parameter for an object" }, { element: "picture", description: "<picture> - responsive image" }, { element: "pre", description: "<pre> - preformatted text" }, { element: "progress", description: "<progress> - progress indicator" }, { element: "q", description: "<q> - short quotation" }, { element: "rb", description: "<rb> - ruby base" }, { element: "rp", description: "<rp> - ruby parentheses" }, { element: "rt", description: "<rt> - ruby text" }, { element: "rtc", description: "<rtc> - ruby text container" }, { element: "s", description: "<s> - strikethrough text" }, { element: "samp", description: "<samp> - sample output" }, { element: "script", description: "<script> - script" }, { element: "section", description: "<section> - thematic grouping" }, { element: "select", description: "<select> - dropdown list" }, { element: "small", description: "<small> - small text" }, { element: "source", description: "<source> - media source" }, { element: "span", description: "<span> - inline section" }, { element: "strong", description: "<strong> - strong importance" }, { element: "style", description: "<style> - CSS styles" }, { element: "sub", description: "<sub> - subscript" }, { element: "summary", description: "<summary> - summary of a details element" }, { element: "sup", description: "<sup> - superscript" }, { element: "table", description: "<table> - table" }, { element: "tbody", description: "<tbody> - table body" }, { element: "td", description: "<td> - table cell" }, { element: "textarea", description: "<textarea> - multi-line text input" }, { element: "tfoot", description: "<tfoot> - table footer" }, { element: "th", description: "<th> - table header cell" }, { element: "thead", description: "<thead> - table header" }, { element: "time", description: "<time> - time or date" }, { element: "title", description: "<title> - document title" }, { element: "tr", description: "<tr> - table row" }, { element: "track", description: "<track> - text tracks for media" }, { element: "u", description: "<u> - underline text" }, { element: "ul", description: "<ul> - unordered list" }, { element: "var", description: "<var> - variable" }, { element: "video", description: "<video> - video content" }, { element: "wbr", description: "<wbr> - word break opportunity" }]
@@ -31,7 +32,7 @@ export class Bootfunc {
                 for (const item of items) {
                     try {
                         const link = item.link;
-                        await page.goto(link, { waitUntil: 'domcontentloaded', timeout: 1000 });
+                        await page.goto(link, { waitUntil: 'domcontentloaded', timeout: 500 });
                         const hrefsOnPage = await page.$$eval('a', anchors => anchors.map(a => a.href));
                         allLinks.push(...hrefsOnPage);
                     } catch (error) { continue }
@@ -58,7 +59,7 @@ export class Bootfunc {
     }
     async Weather(from) {
         let link = `https://www.google.com/search?q=${from} weather`;
-        await page.goto(link, { waitUntil: 'domcontentloaded', timeout: 0 });
+        await page.goto(link, { waitUntil: 'domcontentloaded', timeout: 500 });
         const textValue = await page.$eval('.UQt4rd', el => el.innerText);
         if (textValue) {
             return textValue;
@@ -94,7 +95,7 @@ export class Bootfunc {
                 }
                 for (let i = 0; i < linkA.length; i++) {
                     if (!linkA[i]) continue;
-                    await page.goto(linkA[i], { waitUntil: 'networkidle2' });
+                    await page.goto(linkA[i], { timeout: 0 });
                     switch (Setting) {
                         case "html":
                             const htmlResults = await page.$$eval(Element, el => el.map(element => element.innerHTML));
@@ -103,7 +104,7 @@ export class Bootfunc {
                         case "text":
                             try {
                                 await page.reload();
-                                await page.waitForSelector(Element, { timeout: 1000 });
+                                await page.waitForSelector(Element, { timeout: 500 });
                                 const elements = await page.$$(Element);
                                 const textResults = await Promise.all(
                                     elements.map(async (element) => {
@@ -1430,251 +1431,98 @@ export class Norology {
             let wordsData = await loadWordData();
             let data = await ceu.UserData(user, { prp: 'all' });
             const botInfo = {};
-            const knownParams = [
-                "name", "age", "job", "location", "hobby", "email", "gender", "education",
-                "phone", "socialMedia", "maritalStatus", "languages", "skills", "favoriteFood",
-                "travelExperience", "pets", "goals", "favoriteColor", "diet", "music", "fitness"
-            ];
+            const knownParams = ["name", "age", "job", "location", "hobby", "email", "gender", "education", "phone", "socialMedia", "maritalStatus", "languages", "skills", "favoriteFood", "travelExperience", "pets", "goals", "favoriteColor", "diet", "music", "fitness"];
             knownParams.forEach(param => {
                 botInfo[`bot${param.charAt(0).toUpperCase() + param.slice(1)}`] = data?.[param] || 'none';
             });
-            const weatherQueryRegex = /(how (is|do|can|would|should) the weather|what (is|are) the weather|current weather|weather forecast|tell me the weather|what's the weather like|how's the weather|how is the weather in)/i;
-            const googleQueryRegex = /(how to|what is|explain|define|describe|tell me about)/i;
-            const fileLinkQueryRegex = /\b(find|get|download|provide|share|give|show)\s+(me\s+)?(a\s+)?(link|file)\s+(for|to)?(.+)/i;
-            const mathQueryRegex = /\b(solve|calculate|how much is|evaluate|integral|logarithm|simplify|solve equation|tangent|sine|cosine|find derivative)\s+(.*)\b/i;
-            const geometryQueryRegex = /\b(hypotenuse|triangle area|circle area|circle perimeter|perimeter|area|length)\s+(.*)\b/i;
-            if (mathQueryRegex.test(query)) {
-                const mathExpression = query.replace(mathQueryRegex, '$2').trim(); 
-                let result;
-                try {
-                    if (query.includes('integral') || query.includes('integrate')) {
-                        result = math.integrate(mathExpression, 'x'); 
-                    } else if (query.includes('derivative') || query.includes('find derivative')) {
-                        result = math.derivative(mathExpression, 'x'); 
-                    } else if (query.includes('logarithm') || query.includes('log')) {
-                        result = math.log(mathExpression); 
-                    } else if (query.includes('sine') || query.includes('sin')) {
-                        result = math.sin(mathExpression);
-                    } else if (query.includes('cosine') || query.includes('cos')) {
-                        result = math.cos(mathExpression);
-                    } else if (query.includes('tangent') || query.includes('tan')) {
-                        result = math.tan(mathExpression);
-                    } else if (query.includes('exponential') || query.includes('power')) {
-                        result = math.exp(mathExpression); 
-                    } else if (query.includes('solve equation') || query.includes('equation')) {
-                        const solutions = math.solve(mathExpression);
-                        result = solutions;
-                    } else {
-                        result = math.evaluate(mathExpression);
+            let doc = nlp(query);
+            const isWeatherQuery = doc.has('weather') || doc.has('forecast') || doc.has('current weather');
+            const isGoogleQuery = doc.has('how to') || doc.has('define') || doc.has('explain') || doc.has('tell me about') || doc.has('what is');
+            const isFileLinkQuery = doc.has('link') || doc.has('file') || doc.has('download') || doc.has('get');
+            if (isWeatherQuery) {
+                query = query + ' you found weather data ' + await USF('weather');
+                console.log(query);
+            }
+            else if (isGoogleQuery) {
+                query = query + ' you found info ' + await USF('google');
+            }
+            else if (isFileLinkQuery) {
+                query = query + ' you found file link ' + await USF('file');
+            }
+            const SU = new SUAI();
+            if (await SU.EvalSU(query)) {
+                query = query + 'you found answer' + await SU.EvalSU(query);
+            }
+            let templateChoice = generalReplyTemplates;
+            if (query.includes('health') || query.includes('fitness')) {
+                templateChoice = healthReplyTemplates;
+            } else if (query.includes('diet') || query.includes('nutrition')) {
+                templateChoice = dietReplyTemplates;
+            } else if (query.includes('career') || query.includes('job')) {
+                templateChoice = careerReplyTemplates;
+            } else if (query.includes('work') || query.includes('productivity')) {
+                templateChoice = workReplyTemplates;
+            } else if (query.includes('emotion') || query.includes('mood')) {
+                templateChoice = emotionalReplyTemplates;
+            } else if (query.includes('support') || query.includes('help')) {
+                templateChoice = supportReplyTemplates;
+            } else {
+                templateChoice = Math.random() > 0.5 ? personalReplyTemplates : generalReplyTemplates;
+            }
+            const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await selectWordsBasedOnQueryAndMood(query, 'Neutral', wordsData, mapdata);
+            let dynamicComplement = selectedNoun;
+            const template = templateChoice[Math.floor(Math.random() * templateChoice.length)];
+            let finalReply = template.replace("{subject}", data.username || "Bro")
+                .replace("{verb}", await getSafeString(selectedVerb))
+                .replace("{complement}", await getSafeString(dynamicComplement))
+                .replace("{adjective}", await getSafeString(selectedAdjective))
+                .replace("{conjunction}", await getSafeString(selectedConjunction));
+            const placeholders = ["{subject}", "{verb}", "{complement}", "{adjective}", "{conjunction}"];
+            for (let placeholder of placeholders) {
+                while (finalReply.includes(placeholder)) {
+                    if (placeholder === "{subject}") {
+                        finalReply = finalReply.replace(placeholder, data.username || "Bro");
+                    } else if (placeholder === "{verb}") {
+                        finalReply = finalReply.replace(placeholder, await getSafeString(selectedVerb));
+                    } else if (placeholder === "{complement}") {
+                        const finalComplement = await getSafeString(dynamicComplement);
+                        finalReply = finalReply.replace(placeholder, await getSafeString(finalComplement));
+                    } else if (placeholder === "{adjective}") {
+                        finalReply = finalReply.replace(placeholder, await getSafeString(selectedAdjective));
+                    } else if (placeholder === "{conjunction}") {
+                        finalReply = finalReply.replace(placeholder, await getSafeString(selectedConjunction));
                     }
-                } catch (err) {
-                    result = 'Sorry, I couldn\'t solve that expression.';
                 }
-                const mathSentences = result.toString().split('.').filter(sentence => sentence.trim() !== '');
-                const selectedMathSentence = mathSentences[Math.floor(Math.random() * mathSentences.length)] || result;
-                return `The result of your calculation for "${mathExpression}" is: ${selectedMathSentence}`;
-            } 
-            else if (geometryQueryRegex.test(query)) {
-                const geometryExpression = query.replace(geometryQueryRegex, '$2').trim(); 
-                let result;
-                try {
-                    if (query.includes('hypotenuse')) {
-                        const sides = geometryExpression.split(' ').map(Number);
-                        if (sides.length === 2) {
-                            const [a, b] = sides;
-                            result = math.sqrt(math.add(math.square(a), math.square(b)));
-                        } else {
-                            result = 'Please provide two side lengths of the triangle.';
-                        }
-                    }
-                    else if (query.includes('circle perimeter') || query.includes('perimeter')) {
-                        const radius = parseFloat(geometryExpression);
-                        if (isNaN(radius)) {
-                            result = 'Please provide the radius of the circle.';
-                        } else {
-                            result = math.multiply(2, math.pi, radius);
-                        }
-                    }
-                    else if (query.includes('circle area') || query.includes('area')) {
-                        const radius = parseFloat(geometryExpression);
-                        if (isNaN(radius)) {
-                            result = 'Please provide the radius of the circle.';
-                        } else {
-                            result = math.pi * math.square(radius);
-                        }
-                    }
-                    else if (query.includes('triangle area')) {
-                        const [base, height] = geometryExpression.split(' ').map(Number);
-                        if (base && height) {
-                            result = math.multiply(0.5, base, height);
-                        } else {
-                            result = 'Please provide the base and height of the triangle.';
-                        }
-                    }
-                    else {
-                        result = 'I could not understand the geometric expression.';
-                    }
-                } catch (err) {
-                    result = 'Sorry, I couldn\'t solve that geometric expression.';
-                }
-                const geometrySentences = result.toString().split('.').filter(sentence => sentence.trim() !== '');
-                const selectedGeometrySentence = geometrySentences[Math.floor(Math.random() * geometrySentences.length)] || result;
-                return `The result of your geometry calculation for "${geometryExpression}" is: ${selectedGeometrySentence}`;
-            } 
-            else if (weatherQueryRegex.test(query)) {
+            }
+            return finalReply.trim();
+        }
+        const USF = async (use) => {
+            if (use == 'weather') {
                 try {
                     const location = data.userlocation || '';
                     const weatherData = await bot.Weather(location);
-                    const weatherSentences = weatherData.split('.').filter(sentence => sentence.trim() !== '');
-                    const selectedWeatherSentence = weatherSentences[Math.floor(Math.random() * weatherSentences.length)] || weatherData;
-                    return `The weather in ${location || 'your location'} is currently: \n${selectedWeatherSentence}.`;
+                    return `The weather in ${location || 'your location'} is currently: \n${weatherData}.`;
                 }
                 catch {
                     return 'Where are you from?';
                 }
-            } 
-            else if (fileLinkQueryRegex.test(query)) {
+            }
+            else if (use == 'file') {
                 let matchedFile = query.match(fileLinkQueryRegex);
                 if (matchedFile && matchedFile.length > 0) {
                     let fileType = matchedFile[matchedFile.length - 1].toLowerCase();
                     const refile = await bot.File(query, fileType);
                     let replacement = refile.length > 1 ? refile.join(', ') : refile[0];
-                    return `Here are the links I found for ${fileType} files: ${replacement}`;
+                    return `Here are the links I found for ${fileType} files: ${replacement}` + ' ';
                 }
-            } 
-            else if (googleQueryRegex.test(query)) {
+            }
+            else if (use == 'google') {
                 const replacequestion = new RegExp(`^${query}`, 'g');
-                let googleSummary = await bot.GoogleDATA(query, 'body', 'text');
+                let googleSummary = await bot.GoogleDATA(query, 'body', 'text') || '';
+                if (googleSummary == undefined || '' || null) { googleSummary = await bot.getSumarizeINF(query, 'snippet') }
                 googleSummary = googleSummary.replace(replacequestion, '') || '{complement}';
-                const googleSentences = googleSummary.split('.').filter(sentence => sentence.trim() !== '');
-            
-                const fe = new Fell();
-                const feData = await fe.AllData();
-                const maxValue = Math.max(...Object.values(feData));
-                const maxKey = Object.keys(feData).find(key => feData[key] === maxValue);
-                let mood = '';
-                switch (maxKey) {
-                    case 'Hqx': mood = 'Happy'; break;
-                    case 'Aqx': mood = 'Angry'; break;
-                    case 'Sqx': mood = 'Scared'; break;
-                    case 'Saqx': mood = 'Sad'; break;
-                    case 'Suqx': mood = 'Suspicious'; break;
-                    case 'Default': mood = 'Neutral'; break;
-                    default: mood = 'Neutral'; break;
-                }
-            
-                let templateChoice = generalReplyTemplates;
-                if (query.includes('health') || query.includes('fitness')) {
-                    templateChoice = healthReplyTemplates;
-                } else if (query.includes('diet') || query.includes('nutrition')) {
-                    templateChoice = dietReplyTemplates;
-                } else if (query.includes('career') || query.includes('job')) {
-                    templateChoice = careerReplyTemplates;
-                } else if (query.includes('work') || query.includes('productivity')) {
-                    templateChoice = workReplyTemplates;
-                } else if (query.includes('emotion') || query.includes('mood')) {
-                    templateChoice = emotionalReplyTemplates;
-                } else if (query.includes('support') || query.includes('help')) {
-                    templateChoice = supportReplyTemplates;
-                } else {
-                    templateChoice = Math.random() > 0.5 ? personalReplyTemplates : generalReplyTemplates;
-                }
-            
-                const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await selectWordsBasedOnQueryAndMood(query, mood, wordsData, mapdata);
-                let dynamicComplement = selectedNoun;
-                const template = templateChoice[Math.floor(Math.random() * templateChoice.length)];
-                let reply = template;
-                const placeholders = ["{subject}", "{verb}", "{complement}", "{adjective}", "{conjunction}"];
-            
-                for (let placeholder of placeholders) {
-                    while (reply.includes(placeholder)) {
-                        if (placeholder === "{subject}") {
-                            reply = reply.replace(placeholder, data.username || "Bro");
-                        } else if (placeholder === "{verb}") {
-                            reply = reply.replace(placeholder, await getSafeString(selectedVerb));
-                        } else if (placeholder === "{complement}") {
-                            const selectedSentence = googleSentences[Math.floor(Math.random() * googleSentences.length)] || googleSummary;
-                            reply = reply.replace(placeholder, await getSafeString(selectedSentence || dynamicComplement));
-                        } else if (placeholder === "{adjective}") {
-                            reply = reply.replace(placeholder, await getSafeString(selectedAdjective));
-                        } else if (placeholder === "{conjunction}") {
-                            reply = reply.replace(placeholder, await getSafeString(selectedConjunction));
-                        }
-                    }
-                }
-            
-                return reply;
-            }            
-            else {
-                let wordsData = await loadWordData();
-                let data = await ceu.UserData(user, { prp: 'all' });
-                const botInfo = {};
-                knownParams.forEach(param => {
-                    botInfo[`bot${param.charAt(0).toUpperCase() + param.slice(1)}`] = data?.[param] || 'none';
-                });
-
-                const fe = new Fell();
-                const feData = await fe.AllData();
-                const maxValue = Math.max(...Object.values(feData));
-                const maxKey = Object.keys(feData).find(key => feData[key] === maxValue);
-                let mood = '';
-                switch (maxKey) {
-                    case 'Hqx': mood = 'Happy'; break;
-                    case 'Aqx': mood = 'Angry'; break;
-                    case 'Sqx': mood = 'Scared'; break;
-                    case 'Saqx': mood = 'Sad'; break;
-                    case 'Suqx': mood = 'Suspicious'; break;
-                    case 'Default': mood = 'Neutral'; break;
-                    default: mood = 'Neutral'; break;
-                }
-                const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await selectWordsBasedOnQueryAndMood(query, mood, wordsData, mapdata);
-                let dynamicComplement = selectedNoun;
-                let templateChoice = [];
-                if (query.includes('health') || query.includes('fitness')) {
-                    templateChoice = healthReplyTemplates;
-                } else if (query.includes('diet') || query.includes('nutrition')) {
-                    templateChoice = dietReplyTemplates;
-                } else if (query.includes('career') || query.includes('job') || query.includes('work')) {
-                    templateChoice = careerReplyTemplates;
-                } else if (query.includes('productivity') || query.includes('work ethic') || query.includes('tasks')) {
-                    templateChoice = workReplyTemplates;
-                } else if (query.includes('mood') || query.includes('feel') || query.includes('emotion')) {
-                    templateChoice = emotionalReplyTemplates;
-                } else if (query.includes('support') || query.includes('help') || query.includes('assistance')) {
-                    templateChoice = supportReplyTemplates;
-                } else {
-                    templateChoice = Math.random() > 0.5 ? generalReplyTemplates : personalReplyTemplates;
-                }
-                const template = templateChoice.length > 0 ? templateChoice[Math.floor(Math.random() * templateChoice.length)] : "{subject} {verb} {complement}.";
-                const placeholders = ["{subject}", "{verb}", "{complement}", "{adjective}", "{conjunction}"];
-                let reply = template;
-
-                for (let placeholder of placeholders) {
-                    while (reply.includes(placeholder)) {
-                        if (placeholder === "{subject}") {
-                            reply = reply.replace(placeholder, data.username || "Bro");
-                        } else if (placeholder === "{verb}") {
-                            reply = reply.replace(placeholder, await getSafeString(selectedVerb));
-                        } else if (placeholder === "{complement}") {
-                            reply = reply.replace(placeholder, await getSafeString(dynamicComplement));
-                        } else if (placeholder === "{adjective}") {
-                            reply = reply.replace(placeholder, await getSafeString(selectedAdjective));
-                        } else if (placeholder === "{conjunction}") {
-                            reply = reply.replace(placeholder, await getSafeString(selectedConjunction));
-                        }
-                    }
-                }
-                return reply;
+                return googleSummary + ' ';
             }
-        }
-        async function getSafeString(value) {
-            if (typeof value === 'object' && value !== null) {
-                if (value && value.toString) {
-                    return value.toString();
-                }
-                return 'something';
-            }
-            return value || 'something';
         }
         async function getSafeString(value) {
             if (typeof value === 'object' && value !== null) {
@@ -1692,47 +1540,119 @@ export class Norology {
         ];
         const selectWordsBasedOnQueryAndMood = async (query, mood, wordsData, data) => {
             const queryData = data && Array.isArray(data) ? data[0] : {};
-            const queryObjects = queryData.objects || [];
-            const queryVerbs = queryData.verb ? [queryData.verb] : [];
-
+            const queryObjects = queryData?.objects || [];
+            const queryPlaces = queryData?.places || [];
+            const queryPersons = queryData?.persons || [];
+            const queryTime = queryData?.time || [];
+            const queryReasons = queryData?.reasons || [];
+            const queryMethods = queryData?.methods || [];
+            const queryAdjectives = queryData?.adjectives || [];
+            const queryVerbs = queryData?.verb || [];
             let verb = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Verb")));
             let noun = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Noun")));
             let adjective = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Adjective")));
             let conjunction = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Conjunction")));
-
-            if (queryObjects.length > 0) {
-                noun = noun.filter(word => queryObjects.some(object => word.word.includes(object)));
+            const filterByQuery = (words, queryArray) => {
+                return words.filter(word => {
+                    return queryArray.some(query => {
+                        return word.meanings && Array.isArray(word.meanings) && word.meanings.some(meaning => {
+                            if (typeof meaning === 'string') {
+                                return meaning.includes(query);
+                            }
+                            return resolveObjectToString(meaning)?.includes(query);
+                        });
+                    });
+                });
+            };
+            const resolveObjectToString = (obj) => {
+                if (typeof obj === 'string') {
+                    return obj;
+                } else if (typeof obj === 'object') {
+                    if (obj && obj.text) {
+                        return obj.text;
+                    }
+                    return JSON.stringify(obj);
+                }
+                return '';
+            };
+            if (queryObjects.length > 0) noun = filterByQuery(noun, queryObjects);
+            if (queryPlaces.length > 0) noun = filterByQuery(noun, queryPlaces);
+            if (queryPersons.length > 0) noun = filterByQuery(noun, queryPersons);
+            if (queryTime.length > 0) noun = filterByQuery(noun, queryTime);
+            if (queryReasons.length > 0) noun = filterByQuery(noun, queryReasons);
+            if (queryMethods.length > 0) noun = filterByQuery(noun, queryMethods);
+            if (queryAdjectives.length > 0) adjective = filterByQuery(adjective, queryAdjectives);
+            if (queryVerbs.length > 0) verb = filterByQuery(verb, queryVerbs);
+            const moodFilters = {
+                Happy: { adjective: ["happy", "joyful", "excited"], verb: ["celebrate", "enjoy", "laugh"] },
+                Angry: { adjective: ["angry", "frustrated", "irritated"], verb: ["fight", "argue", "shout"] },
+                Sad: { adjective: ["sad", "lonely", "melancholy"], verb: ["cry", "weep", "slow"] },
+                Scared: { adjective: ["scared", "worried", "nervous"], verb: ["flee", "hide", "shiver"] },
+                Suspicious: { adjective: ["suspicious", "doubtful", "questioning"], verb: ["question", "suspect", "distrust"] }
+            };
+        
+            const moodFilter = moodFilters[mood] || { adjective: [], verb: [] };
+        
+            if (moodFilter.adjective.length > 0) {
+                adjective = adjective.filter(word => moodFilter.adjective.some(moodWord => word.word.includes(moodWord)));
             }
-            if (queryVerbs.length > 0) {
-                verb = verb.filter(word => queryVerbs.some(verbAction => word.word.includes(verbAction)));
+            if (moodFilter.verb.length > 0) {
+                verb = verb.filter(word => moodFilter.verb.some(moodWord => word.word.includes(moodWord)));
             }
-            if (mood === 'Happy') {
-                adjective = adjective.filter(word => word.word.includes("happy") || word.word.includes("joyful") || word.word.includes("excited"));
-                verb = verb.filter(word => word.word.includes("celebrate") || word.word.includes("enjoy") || word.word.includes("laugh"));
-            } else if (mood === 'Angry') {
-                adjective = adjective.filter(word => word.word.includes("angry") || word.word.includes("frustrated") || word.word.includes("irritated"));
-                verb = verb.filter(word => word.word.includes("fight") || word.word.includes("argue") || word.word.includes("shout"));
-            }
-            else if (mood === 'Sad') {
-                adjective = adjective.filter(word => word.word.includes("sad") || word.word.includes("lonely") || word.word.includes("melancholy"));
-                verb = verb.filter(word => word.word.includes("cry") || word.word.includes("weep") || word.word.includes("slow"));
-            } else if (mood === 'Scared') {
-                adjective = adjective.filter(word => word.word.includes("scared") || word.word.includes("worried") || word.word.includes("nervous"));
-                verb = verb.filter(word => word.word.includes("flee") || word.word.includes("hide") || word.word.includes("shiver"));
-            } else if (mood === 'Suspicious') {
-                adjective = adjective.filter(word => word.word.includes("suspicious") || word.word.includes("doubtful") || word.word.includes("questioning"));
-                verb = verb.filter(word => word.word.includes("question") || word.word.includes("suspect") || word.word.includes("distrust"));
-            }
-            const queryLower = query.toLowerCase();
-            const requestedParam = knownParams.find(param => queryLower.includes(param));
-            let selectedVerb = verb[Math.floor(Math.random() * verb.length)]?.word || "does";
-            let selectedNoun = noun[Math.floor(Math.random() * noun.length)]?.word || "something";
-            let selectedAdjective = adjective[Math.floor(Math.random() * adjective.length)]?.word || "good";
-            let selectedConjunction = conjunction[Math.floor(Math.random() * conjunction.length)]?.word || "and";
-
+            const selectBestWord = (words) => {
+                if (!words.length) return null;
+                let maxScore = 0;
+                let bestWord = null;
+                let index = 0;
+                while (index < words.length) {
+                    const word = words[index];
+                    let score = 0;
+                    if (word.meanings && Array.isArray(word.meanings)) {
+                        for (let meaning of word.meanings) {
+                            const resolvedMeaning = resolveObjectToString(meaning);
+                            score += query.split(' ').filter(q => resolvedMeaning.includes(q)).length;
+                        }
+                    }
+                    if (score > maxScore) {
+                        maxScore = score;
+                        bestWord = word;
+                    }
+                    index++;
+                }
+                return bestWord ? bestWord.word : null;
+            };
+            const extractWordsAndNumbers = (query) => {
+                const regex = /\b(\w+|\d+(\.\d+)?)\b/g;
+                let match;
+                const wordsAndNumbers = [];
+                while ((match = regex.exec(query)) !== null) {
+                    wordsAndNumbers.push(match[0]);
+                }
+                return wordsAndNumbers;
+            };
+            const extractedWords = extractWordsAndNumbers(query);
+            let selectedVerb = selectBestWord(verb) || faker.hacker.verb();
+            let selectedNoun = selectBestWord(noun) || faker.hacker.noun();
+            let selectedAdjective = selectBestWord(adjective) || faker.hacker.adjective();
+            let selectedConjunction = selectBestWord(conjunction) || faker.word;
+            extractedWords.forEach(word => {
+                if (verb.some(v => v.word === word)) {
+                    selectedVerb = word;
+                }
+                if (noun.some(n => n.word === word)) {
+                    selectedNoun = word;
+                }
+                if (adjective.some(adj => adj.word === word)) {
+                    selectedAdjective = word;
+                }
+                if (!isNaN(word)) {
+                    selectedNoun = word;  
+                }
+            });
+            const requestedParam = knownParams.find(param => query.includes(param));
             if (requestedParam) {
-                const isTalkingAboutSelf = /^(my|i am|i\'m|my name|i'm)/.test(queryLower);
-                const isTalkingAboutUser = /^(your|you|are you|do you|what is your)/.test(queryLower);
+                const isTalkingAboutSelf = /^(my|i am|i\'m|my name|i'm)/.test(query);
+                const isTalkingAboutUser = /^(your|you|are you|do you|what is your)/.test(query);
                 const udata = await ceu.UserData(user, { prp: 'all' });
                 let formattedParam = requestedParam.charAt(0).toUpperCase() + requestedParam.slice(1);
                 if (isTalkingAboutUser) {
@@ -1745,14 +1665,13 @@ export class Norology {
                 } else if (isTalkingAboutSelf) {
                     return {
                         selectedVerb: "is",
-                        selectedNoun: udata[`user${requestedParam}`] || "unknown",
+                        selectedNoun: udata[`user${formattedParam}`] || "unknown",
                         selectedAdjective: "known",
                         selectedConjunction: "and"
                     };
                 }
-                return
             }
-
+        
             return { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction };
         };
         const getReplyUntilValid = async (query, user) => {
@@ -1766,3 +1685,290 @@ export class Norology {
         return await getReplyUntilValid(query, user) || 'Sorry but I am not understand!';
     }
 }
+class SUAI {
+    async EvalSU(query) {
+        function keepOnlySpecificLetter(inputString, letterToKeep) {
+            const letterToKeepLower = letterToKeep.toLowerCase();
+            let result = '';
+            for (let i = 0; i < inputString.length; i++) {
+                let char = inputString[i];
+                if (/[a-zA-Z]/.test(char)) {
+                    if (char.toLowerCase() === letterToKeepLower) {
+                        result += char;
+                    }
+                } else {
+                    result += char;
+                }
+            }
+            return result;
+        }
+        let math = {
+            abs: (x) => Math.abs(x),
+            add: (x, y) => x + y,
+            subtract: (x, y) => x - y,
+            multiply: (x, y) => x * y,
+            divide: (x, y) => x / y,
+            sqrt: (x) => Math.sqrt(x),
+            pow: (x, y) => Math.pow(x, y),
+            mod: (x, y) => x % y,
+            log: (x) => Math.log(x),
+            exp: (x) => Math.exp(x),
+            factorial: (x) => {
+                if (x === 0 || x === 1) return 1;
+                let result = 1;
+                for (let i = 2; i <= x; i++) {
+                    result *= i;
+                }
+                return result;
+            },
+            max: (arr) => Math.max(...arr),
+            min: (arr) => Math.min(...arr),
+            mean: (arr) => arr.reduce((a, b) => a + b, 0) / arr.length,
+            gcd: (a, b) => {
+                while (b) {
+                    let temp = b;
+                    b = a % b;
+                    a = temp;
+                }
+                return a;
+            },
+            lcm: (a, b) => (a * b) / math.gcd(a, b),
+            transpose: (matrix) => matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex])),
+            inverse: (matrix) => {
+                let n = matrix.length;
+                let m = matrix[0].length;
+                if (n !== m) return null;
+                let augmented = matrix.map((row, i) => [...row, ...Array(n).fill(i === n - 1 ? 1 : 0)]);
+
+                for (let i = 0; i < n; i++) {
+                    let pivot = augmented[i][i];
+                    if (pivot === 0) return null;
+                    for (let j = 0; j < 2 * n; j++) augmented[i][j] /= pivot;
+                    for (let j = 0; j < n; j++) {
+                        if (j === i) continue;
+                        let ratio = augmented[j][i];
+                        for (let k = 0; k < 2 * n; k++) augmented[j][k] -= ratio * augmented[i][k];
+                    }
+                }
+                return augmented.map(row => row.slice(n));
+            },
+            determinant: (matrix) => {
+                let n = matrix.length;
+                if (n === 1) return matrix[0][0];
+                if (n === 2) return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
+
+                let det = 0;
+                for (let i = 0; i < n; i++) {
+                    let subMatrix = matrix.slice(1).map(row => row.filter((_, j) => j !== i));
+                    det += Math.pow(-1, i) * matrix[0][i] * math.determinant(subMatrix);
+                }
+                return det;
+            },
+            rank: (matrix) => {
+                let n = matrix.length;
+                let m = matrix[0].length;
+                let augmented = matrix.map(row => row.slice());
+
+                let rank = 0;
+                for (let i = 0; i < n; i++) {
+                    if (augmented[i][i] !== 0) {
+                        rank++;
+                    }
+                }
+                return rank;
+            },
+            sin: (x) => Math.sin(x),
+            cos: (x) => Math.cos(x),
+            tan: (x) => Math.tan(x),
+            asin: (x) => Math.asin(x),
+            acos: (x) => Math.acos(x),
+            atan: (x) => Math.atan(x),
+            derivative: (f, x, h = 1e-5) => (f(x + h) - f(x - h)) / (2 * h),
+            integral: (f, a, b, n = 1000) => {
+                let h = (b - a) / n;
+                let sum = 0;
+                for (let i = 0; i < n; i++) {
+                    let x0 = a + i * h;
+                    let x1 = a + (i + 1) * h;
+                    sum += 0.5 * h * (f(x0) + f(x1));
+                }
+                return sum;
+            },
+            solve: (b) => { try { const solution = nerdamer.solveEquations(keepOnlySpecificLetter(query.replace('solve', ''), b), b); return solution.toString(); } catch { return 'nfe' } },
+            solveSystem: (A, b) => {
+                let inverseA = math.inverse(A);
+                if (!inverseA) throw new Error('Matrix A is not invertible');
+                return inverseA.map(row => row.reduce((sum, val, i) => sum + val * b[i], 0));
+            },
+            polynomial: (coeffs, x) => coeffs.reduce((sum, coeff, i) => sum + coeff * Math.pow(x, i), 0),
+            parabola: (a, b, c) => {
+                let vertexX = -b / (2 * a);
+                let vertexY = a * Math.pow(vertexX, 2) + b * vertexX + c;
+                return `Vertex: (${vertexX}, ${vertexY})`;
+            },
+            binomial: (n, k) => math.factorial(n) / (math.factorial(k) * math.factorial(n - k)),
+            normalDistribution: (x, mean, stdDev) => {
+                let exponent = -Math.pow(x - mean, 2) / (2 * Math.pow(stdDev, 2));
+                return (1 / (stdDev * Math.sqrt(2 * Math.PI))) * Math.exp(exponent);
+            },
+            complexAdd: (a, b) => ({ real: a.real + b.real, imag: a.imag + b.imag }),
+            complexMultiply: (a, b) => ({
+                real: a.real * b.real - a.imag * b.imag,
+                imag: a.real * b.imag + a.imag * b.real
+            }),
+            complexConjugate: (a) => ({ real: a.real, imag: -a.imag }),
+            complexMagnitude: (a) => Math.sqrt(a.real * a.real + a.imag * a.imag)
+        };
+
+        async function solveMathExpression(sentence) {
+            let words = sentence.toLowerCase().split(/\s+/);
+            const numberRegex = /\d+(\.\d+)?/g;
+            const operatorRegex = /(plus|minus|multiply|divide|sqrt|power|mod|log|exp|factorial|max|min|gcd|lcm|transpose|inverse|determinant|rank|derivative|integral|solve|solveSystem|polynomial|parabola|sin|cos|tan|asin|acos|atan|log10|log2|floor|ceil|round|random|matrix|binomial|normalDistribution|complexAdd|complexMultiply|complexConjugate|complexMagnitude)/g;
+            let result = 0;
+            let numbers = words.filter(word => numberRegex.test(word)).map(word => parseFloat(word));
+            let operators = words.filter(word => operatorRegex.test(word));
+
+            if (numbers.length === 0) {
+                return '';
+            }
+
+            result = numbers[0];
+            let currentResult = result;
+
+            for (let i = 1; i < numbers.length; i++) {
+                let operator = operators[i - 1];
+                let number = numbers[i];
+
+                try {
+                    switch (operator) {
+                        case 'plus':
+                            currentResult = math.add(currentResult, number);
+                            break;
+                        case 'minus':
+                            currentResult = math.subtract(currentResult, number);
+                            break;
+                        case 'multiply':
+                            currentResult = math.multiply(currentResult, number);
+                            break;
+                        case 'divide':
+                            if (number === 0) {
+                                throw new Error('Division by zero');
+                            }
+                            currentResult = math.divide(currentResult, number);
+                            break;
+                        case 'sqrt':
+                            currentResult = math.sqrt(currentResult);
+                            break;
+                        case 'power':
+                            currentResult = math.pow(currentResult, number);
+                            break;
+                        case 'mod':
+                            currentResult = math.mod(currentResult, number);
+                            break;
+                        case 'log':
+                            currentResult = math.log(currentResult);
+                            break;
+                        case 'exp':
+                            currentResult = math.exp(currentResult);
+                            break;
+                        case 'factorial':
+                            currentResult = math.factorial(currentResult);
+                            break;
+                        case 'sin':
+                            currentResult = math.sin(currentResult);
+                            break;
+                        case 'cos':
+                            currentResult = math.cos(currentResult);
+                            break;
+                        case 'tan':
+                            currentResult = math.tan(currentResult);
+                            break;
+                        case 'asin':
+                            currentResult = math.asin(currentResult);
+                            break;
+                        case 'acos':
+                            currentResult = math.acos(currentResult);
+                            break;
+                        case 'atan':
+                            currentResult = math.atan(currentResult);
+                            break;
+                        case 'derivative':
+                            currentResult = math.derivative(x => math.polynomial([1, 2, 3], x), currentResult);
+                            break;
+                        case 'integral':
+                            currentResult = math.integral(x => math.polynomial([1, 2, 3], x), 0, currentResult);
+                            break;
+                        case 'solve':
+                            const alphabetLower = [
+                                'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+                                'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+                                'u', 'v', 'w', 'x', 'y', 'z'
+                            ];
+                            let solved = []
+                            for (let a = 0; a < alphabetLower.length; a++) {
+                                if (math.solve(alphabetLower[a]) !== 'nfe') {
+                                    solved.push(alphabetLower[a] + ':' + math.solve(alphabetLower[a]));
+                                }
+                            }
+                            currentResult = solved.toString();
+                            break;
+                        case 'solveSystem':
+                            currentResult = math.solveSystem(currentResult, numbers.slice(i + 1));
+                            break;
+                        case 'polynomial':
+                            currentResult = math.polynomial([1, 2, 3], currentResult);
+                            break;
+                        case 'parabola':
+                            currentResult = math.parabola(number, numbers[i + 1], numbers[i + 2]);
+                            break;
+                        case 'binomial':
+                            currentResult = math.binomial(number, numbers[i + 1]);
+                            break;
+                        case 'normaldistribution':
+                            currentResult = math.normalDistribution(number, numbers[i + 1], numbers[i + 2]);
+                            break;
+                        case 'complexadd':
+                            currentResult = math.complexAdd(currentResult, { real: number, imag: 0 });
+                            break;
+                        case 'complexmultiply':
+                            currentResult = math.complexMultiply(currentResult, { real: number, imag: 0 });
+                            break;
+                        case 'complexconjugate':
+                            currentResult = math.complexConjugate(currentResult);
+                            break;
+                        case 'complexmagnitude':
+                            currentResult = math.complexMagnitude(currentResult);
+                            break;
+                        case 'floor':
+                            currentResult = Math.floor(currentResult);
+                            break;
+                        case 'ceil':
+                            currentResult = Math.ceil(currentResult);
+                            break;
+                        case 'round':
+                            currentResult = Math.round(currentResult);
+                            break;
+                        case 'random':
+                            currentResult = Math.random();
+                            break;
+                        default:
+                            throw new Error(`Unsupported operator: ${operator}`);
+                    }
+                } catch (error) {
+                    return `Error: ${error.message}`;
+                }
+            }
+            return ' ' + currentResult.toString();
+        }
+        let result = await solveMathExpression(query.replaceAll("!", "factorial").replaceAll("+", "plus").replaceAll("-", "minus").replaceAll("*", "multiply").replaceAll("/", "divide").replaceAll("%", "mod").replaceAll("^", "power"));
+        return result.toString();
+    }
+    async AISU() {
+
+    }
+}
+(function () {
+    console.error = function () {
+    };
+    console.warn = function () { };
+})();
