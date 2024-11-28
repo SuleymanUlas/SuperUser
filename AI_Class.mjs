@@ -538,7 +538,6 @@ ${two}
             const matches = [...dats.matchAll(regex)];
             let matcD = {};
             if (matches.length === 0) {
-                console.info("No matches found");
             } else {
                 matches.forEach((match) => {
                     matcD[match[1]] = match[2];
@@ -1247,68 +1246,162 @@ export class CreateQuery {
         }
         return value || 'something';
     }
-    async selectWordsBasedOnQueryAndMood(query, mood, wordsData, User) {
-        const nlpResult = await nlpUsage(query);
-        const extractedMeanings = nlpResult.extracted_meanings;
+     async selectWordsBasedOnQueryAndMood (query, mood, wordsData, data, user)  {
+        const ceu = new Code_Edit_Used;
+        const knownParams = [
+            "name", "age", "job", "location", "hobby", "email", "gender", "education",
+            "phone", "socialMedia", "maritalStatus", "languages", "skills", "favoriteFood",
+            "travelExperience", "pets", "goals", "favoriteColor", "diet", "music", "fitness"
+        ];
+        const queryData = data && Array.isArray(data) ? data[0] : {};
+        const queryObjects = queryData?.objects || [];
+        const queryPlaces = queryData?.places || [];
+        const queryPersons = queryData?.persons || [];
+        const queryTime = queryData?.time || [];
+        const queryReasons = queryData?.reasons || [];
+        const queryMethods = queryData?.methods || [];
+        const queryAdjectives = queryData?.adjectives || [];
+        const queryVerbs = queryData?.verb || [];
+    
         let verb = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Verb")));
         let noun = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Noun")));
         let adjective = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Adjective")));
         let conjunction = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Conjunction")));
-        let extractedVerbs = [];
-        let extractedNouns = [];
-        let extractedAdjectives = [];
-        extractedMeanings.forEach(extracted => {
-            if (extracted.verb) {
-                extractedVerbs = extracted.verb.split(" ");
+    
+        const filterByQuery = (words, queryArray) => {
+            return words.filter(word => {
+                return queryArray.some(query => {
+                    return word.meanings && Array.isArray(word.meanings) && word.meanings.some(meaning => {
+                        if (typeof meaning === 'string') {
+                            return meaning.includes(query);
+                        }
+                        return resolveObjectToString(meaning)?.includes(query);
+                    });
+                });
+            });
+        };
+    
+        const resolveObjectToString = (obj) => {
+            if (typeof obj === 'string') {
+                return obj;
+            } else if (typeof obj === 'object') {
+                if (obj && obj.text) {
+                    return obj.text;
+                }
+                return JSON.stringify(obj);
             }
-            if (extracted.objects) {
-                extractedNouns = extracted.objects;
+            return '';
+        };
+    
+        if (queryObjects.length > 0) noun = filterByQuery(noun, queryObjects);
+        if (queryPlaces.length > 0) noun = filterByQuery(noun, queryPlaces);
+        if (queryPersons.length > 0) noun = filterByQuery(noun, queryPersons);
+        if (queryTime.length > 0) noun = filterByQuery(noun, queryTime);
+        if (queryReasons.length > 0) noun = filterByQuery(noun, queryReasons);
+        if (queryMethods.length > 0) noun = filterByQuery(noun, queryMethods);
+        if (queryAdjectives.length > 0) adjective = filterByQuery(adjective, queryAdjectives);
+        if (queryVerbs.length > 0) verb = filterByQuery(verb, queryVerbs);
+    
+        const moodFilters = {
+            Happy: { adjective: ["happy", "joyful", "excited"], verb: ["celebrate", "enjoy", "laugh"] },
+            Angry: { adjective: ["angry", "frustrated", "irritated"], verb: ["fight", "argue", "shout"] },
+            Sad: { adjective: ["sad", "lonely", "melancholy"], verb: ["cry", "weep", "slow"] },
+            Scared: { adjective: ["scared", "worried", "nervous"], verb: ["flee", "hide", "shiver"] },
+            Suspicious: { adjective: ["suspicious", "doubtful", "questioning"], verb: ["question", "suspect", "distrust"] }
+        };
+    
+        const moodFilter = moodFilters[mood] || { adjective: [], verb: [] };
+    
+        if (moodFilter.adjective.length > 0) {
+            adjective = adjective.filter(word => moodFilter.adjective.some(moodWord => word.word.includes(moodWord)));
+        }
+        if (moodFilter.verb.length > 0) {
+            verb = verb.filter(word => moodFilter.verb.some(moodWord => word.word.includes(moodWord)));
+        }
+    
+        const selectBestWord = (words) => {
+            if (!words.length) return null;
+            let maxScore = 0;
+            let bestWord = null;
+            let index = 0;
+            while (index < words.length) {
+                const word = words[index];
+                let score = 0;
+                if (word.meanings && Array.isArray(word.meanings)) {
+                    for (let meaning of word.meanings) {
+                        const resolvedMeaning = resolveObjectToString(meaning);
+                        score += query.split(' ').filter(q => resolvedMeaning.includes(q)).length;
+                    }
+                }
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestWord = word;
+                }
+                index++;
             }
-            if (mood === "Happy") {
-                extractedAdjectives.push("happy");
-            } else if (mood === "Sad") {
-                extractedAdjectives.push("sad");
+            return bestWord ? bestWord.word : null;
+        };
+    
+        const extractWordsAndNumbers = (query) => {
+            const regex = /\b(\w+|\d+(\.\d+)?)\b/g;
+            let match;
+            const wordsAndNumbers = [];
+            while ((match = regex.exec(query)) !== null) {
+                wordsAndNumbers.push(match[0]);
             }
-
-            if (extracted.methods) {
-                extractedAdjectives.push(...extracted.methods);
+            return wordsAndNumbers;
+        };
+        const extractedWords = extractWordsAndNumbers(query);
+        let selectedVerb = selectBestWord(verb) || faker.hacker.verb();
+        let selectedNoun = selectBestWord(noun) || faker.hacker.noun();
+        let selectedAdjective = selectBestWord(adjective) || faker.hacker.adjective();
+        let selectedConjunction = selectBestWord(conjunction) || faker.word;
+    
+        extractedWords.forEach(word => {
+            if (verb.some(v => v.word === word)) {
+                selectedVerb = word === 'complement' ? '' : word; 
+            }
+            if (noun.some(n => n.word === word)) {
+                selectedNoun = word;
+            }
+            if (adjective.some(adj => adj.word === word)) {
+                selectedAdjective = word;
+            }
+            if (!isNaN(word)) {
+                selectedNoun = word;
             }
         });
-        if (query.includes("health") || query.includes("fitness")) {
-            verb = verb.filter(word => word.word.includes("exercise") || word.word.includes("workout"));
-            noun = noun.filter(word => word.word.includes("workout") || word.word.includes("meal"));
-            adjective = adjective.filter(word => word.word.includes("healthy"));
+    
+        const requestedParam = knownParams.find(param => query.includes(param));
+        if (requestedParam) {
+            const isTalkingAboutSelf = /^(my|i am|i\'m|my name|i'm)/.test(query);
+            const isTalkingAboutUser = /^(your|you|are you|do you|what is your)/.test(query);
+            const udata = await ceu.UserData(user, { prp: 'all' });
+            let formattedParam = requestedParam.charAt(0).toUpperCase() + requestedParam.slice(1);
+            if (isTalkingAboutUser) {
+                return {
+                    selectedVerb: ["is"],
+                    selectedNoun: [udata[`bot${formattedParam}`] || "unknown"],
+                    selectedAdjective: ["known"],
+                    selectedConjunction: ["and"]
+                };
+            } else if (isTalkingAboutSelf) {
+                return {
+                    selectedVerb: ["is"],
+                    selectedNoun: [udata[`user${formattedParam}`] || "unknown"],
+                    selectedAdjective: ["known"],
+                    selectedConjunction: ["and"]
+                };
+            }
         }
-
-        if (query.includes("career") || query.includes("job")) {
-            verb = verb.filter(word => word.word.includes("work") || word.word.includes("advance"));
-            noun = noun.filter(word => word.word.includes("task") || word.word.includes("project"));
-            adjective = adjective.filter(word => word.word.includes("successful"));
-        }
-
-        if (mood === 'Happy') {
-            adjective = adjective.filter(word => word.word.includes("happy"));
-            verb = verb.filter(word => word.word.includes("celebrate"));
-        } else if (mood === 'Sad') {
-            adjective = adjective.filter(word => word.word.includes("sad"));
-            verb = verb.filter(word => word.word.includes("cry"));
-        }
-        if (extractedVerbs.length > 0) {
-            verb = verb.filter(word => extractedVerbs.some(extractedVerb => word.word.includes(extractedVerb)));
-        }
-        if (extractedNouns.length > 0) {
-            noun = noun.filter(word => extractedNouns.some(extractedNoun => word.word.includes(extractedNoun)));
-        }
-        if (extractedAdjectives.length > 0) {
-            adjective = adjective.filter(word => extractedAdjectives.some(extractedAdj => word.word.includes(extractedAdj)));
-        }
-        let selectedVerb = verb.length > 0 ? verb[Math.floor(Math.random() * verb.length)]?.word : "does";
-        let selectedNoun = noun.length > 0 ? noun[Math.floor(Math.random() * noun.length)]?.word : "something";
-        let selectedAdjective = adjective.length > 0 ? adjective[Math.floor(Math.random() * adjective.length)]?.word : "good";
-        let selectedConjunction = conjunction.length > 0 ? conjunction[Math.floor(Math.random() * conjunction.length)]?.word : "and";
-
-        return { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction };
-    }
+    
+        return {
+            selectedVerb: [selectedVerb],
+            selectedNoun: [selectedNoun],
+            selectedAdjective: [selectedAdjective],
+            selectedConjunction: [selectedConjunction]
+        };
+    }; 
     async loadWordData() {
         const filePath = './AllData/QueryAnalayzing.json';
         const data = await fsp.readFile(filePath, 'utf8');
@@ -1437,11 +1530,10 @@ export class Norology {
             });
             let doc = nlp(query);
             const isWeatherQuery = doc.has('weather') || doc.has('forecast') || doc.has('current weather');
-            const isGoogleQuery = doc.has('how to') || doc.has('define') || doc.has('explain') || doc.has('tell me about') || doc.has('what is');
+            const isGoogleQuery = doc.has('how to') || doc.has('define') || doc.has('explain') || doc.has('tell me about') || doc.has('what is') && !doc.has('what is you');
             const isFileLinkQuery = doc.has('link') || doc.has('file') || doc.has('download') || doc.has('get');
             if (isWeatherQuery) {
                 query = query + ' you found weather data ' + await USF('weather');
-                console.log(query);
             }
             else if (isGoogleQuery) {
                 query = query + ' you found info ' + await USF('google');
@@ -1548,10 +1640,12 @@ export class Norology {
             const queryMethods = queryData?.methods || [];
             const queryAdjectives = queryData?.adjectives || [];
             const queryVerbs = queryData?.verb || [];
+        
             let verb = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Verb")));
             let noun = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Noun")));
             let adjective = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Adjective")));
             let conjunction = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Conjunction")));
+        
             const filterByQuery = (words, queryArray) => {
                 return words.filter(word => {
                     return queryArray.some(query => {
@@ -1564,6 +1658,7 @@ export class Norology {
                     });
                 });
             };
+        
             const resolveObjectToString = (obj) => {
                 if (typeof obj === 'string') {
                     return obj;
@@ -1575,6 +1670,7 @@ export class Norology {
                 }
                 return '';
             };
+        
             if (queryObjects.length > 0) noun = filterByQuery(noun, queryObjects);
             if (queryPlaces.length > 0) noun = filterByQuery(noun, queryPlaces);
             if (queryPersons.length > 0) noun = filterByQuery(noun, queryPersons);
@@ -1583,6 +1679,7 @@ export class Norology {
             if (queryMethods.length > 0) noun = filterByQuery(noun, queryMethods);
             if (queryAdjectives.length > 0) adjective = filterByQuery(adjective, queryAdjectives);
             if (queryVerbs.length > 0) verb = filterByQuery(verb, queryVerbs);
+        
             const moodFilters = {
                 Happy: { adjective: ["happy", "joyful", "excited"], verb: ["celebrate", "enjoy", "laugh"] },
                 Angry: { adjective: ["angry", "frustrated", "irritated"], verb: ["fight", "argue", "shout"] },
@@ -1599,6 +1696,7 @@ export class Norology {
             if (moodFilter.verb.length > 0) {
                 verb = verb.filter(word => moodFilter.verb.some(moodWord => word.word.includes(moodWord)));
             }
+        
             const selectBestWord = (words) => {
                 if (!words.length) return null;
                 let maxScore = 0;
@@ -1621,6 +1719,7 @@ export class Norology {
                 }
                 return bestWord ? bestWord.word : null;
             };
+        
             const extractWordsAndNumbers = (query) => {
                 const regex = /\b(\w+|\d+(\.\d+)?)\b/g;
                 let match;
@@ -1635,9 +1734,10 @@ export class Norology {
             let selectedNoun = selectBestWord(noun) || faker.hacker.noun();
             let selectedAdjective = selectBestWord(adjective) || faker.hacker.adjective();
             let selectedConjunction = selectBestWord(conjunction) || faker.word;
+        
             extractedWords.forEach(word => {
                 if (verb.some(v => v.word === word)) {
-                    selectedVerb = word;
+                    selectedVerb = word === 'complement' ? '' : word; 
                 }
                 if (noun.some(n => n.word === word)) {
                     selectedNoun = word;
@@ -1646,9 +1746,10 @@ export class Norology {
                     selectedAdjective = word;
                 }
                 if (!isNaN(word)) {
-                    selectedNoun = word;  
+                    selectedNoun = word;
                 }
             });
+        
             const requestedParam = knownParams.find(param => query.includes(param));
             if (requestedParam) {
                 const isTalkingAboutSelf = /^(my|i am|i\'m|my name|i'm)/.test(query);
@@ -1657,23 +1758,28 @@ export class Norology {
                 let formattedParam = requestedParam.charAt(0).toUpperCase() + requestedParam.slice(1);
                 if (isTalkingAboutUser) {
                     return {
-                        selectedVerb: "is",
-                        selectedNoun: udata[`bot${formattedParam}`] || "unknown",
-                        selectedAdjective: "known",
-                        selectedConjunction: "and"
+                        selectedVerb: ["is"],
+                        selectedNoun: [udata[`bot${formattedParam}`] || "unknown"],
+                        selectedAdjective: ["known"],
+                        selectedConjunction: ["and"]
                     };
                 } else if (isTalkingAboutSelf) {
                     return {
-                        selectedVerb: "is",
-                        selectedNoun: udata[`user${formattedParam}`] || "unknown",
-                        selectedAdjective: "known",
-                        selectedConjunction: "and"
+                        selectedVerb: ["is"],
+                        selectedNoun: [udata[`user${formattedParam}`] || "unknown"],
+                        selectedAdjective: ["known"],
+                        selectedConjunction: ["and"]
                     };
                 }
             }
         
-            return { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction };
-        };
+            return {
+                selectedVerb: [selectedVerb],
+                selectedNoun: [selectedNoun],
+                selectedAdjective: [selectedAdjective],
+                selectedConjunction: [selectedConjunction]
+            };
+        };        
         const getReplyUntilValid = async (query, user) => {
             let reply = '';
 
@@ -1820,25 +1926,20 @@ class SUAI {
             complexMagnitude: (a) => Math.sqrt(a.real * a.real + a.imag * a.imag)
         };
 
-        async function solveMathExpression(sentence) {
+        function solveMathExpression(sentence) {
             let words = sentence.toLowerCase().split(/\s+/);
-            const numberRegex = /\d+(\.\d+)?/g;
+            const numberRegex = /\b\d+(\.\d+)?\b/g;
             const operatorRegex = /(plus|minus|multiply|divide|sqrt|power|mod|log|exp|factorial|max|min|gcd|lcm|transpose|inverse|determinant|rank|derivative|integral|solve|solveSystem|polynomial|parabola|sin|cos|tan|asin|acos|atan|log10|log2|floor|ceil|round|random|matrix|binomial|normalDistribution|complexAdd|complexMultiply|complexConjugate|complexMagnitude)/g;
             let result = 0;
             let numbers = words.filter(word => numberRegex.test(word)).map(word => parseFloat(word));
             let operators = words.filter(word => operatorRegex.test(word));
-
             if (numbers.length === 0) {
                 return '';
             }
-
-            result = numbers[0];
-            let currentResult = result;
-
+            result = numbers[0];let currentResult = result;
             for (let i = 1; i < numbers.length; i++) {
                 let operator = operators[i - 1];
                 let number = numbers[i];
-
                 try {
                     switch (operator) {
                         case 'plus':
@@ -1872,7 +1973,11 @@ class SUAI {
                             currentResult = math.exp(currentResult);
                             break;
                         case 'factorial':
-                            currentResult = math.factorial(currentResult);
+                            if (Number.isInteger(currentResult) && currentResult >= 0) {
+                                currentResult = math.factorial(currentResult);  
+                            } else {
+                                throw new Error('Factorial requires a non-negative integer');
+                            }
                             break;
                         case 'sin':
                             currentResult = math.sin(currentResult);
@@ -1960,7 +2065,7 @@ class SUAI {
             }
             return ' ' + currentResult.toString();
         }
-        let result = await solveMathExpression(query.replaceAll("!", "factorial").replaceAll("+", "plus").replaceAll("-", "minus").replaceAll("*", "multiply").replaceAll("/", "divide").replaceAll("%", "mod").replaceAll("^", "power"));
+        let result = solveMathExpression(query.replaceAll("!", " factorial").replaceAll("+", " plus").replaceAll("-", " minus").replaceAll("*", " multiply").replaceAll("/", " divide").replaceAll("%", " mod").replaceAll("^", " power"));
         return result.toString();
     }
     async AISU() {

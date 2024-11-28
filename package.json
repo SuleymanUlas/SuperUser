@@ -1,6 +1,6 @@
 {
   "name": "s.u.a.i",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "You can train Prompts AI with either function or user data or get Unique and Emotional Responses.",
   "main": "AI_S.U.mjs",
   "dependencies": {
