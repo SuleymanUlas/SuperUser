@@ -20,34 +20,38 @@ const browser = await puppeteer.launch({ headless: true }); const page = await b
 export class Bootfunc {
     async File(SearchF, fmime) {
         const ceuser = new Code_Edit_Used;
-        const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }) || console.log('no api key'); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' }) || console.log('no search engine id');
+        const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' });
+        if (apiKey == '<=DA<apikey>TA=>' || searchEngineId == '<=DA<searchengineid>TA=>') { Info('0'); return ''}
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&q=${SearchF}`;
         const flinkm = [];
         try {
             const response = await fetch(url);
             const data = await response.json();
             const { items } = data;
-            const allLinks = [];
+            let allLinks = [];
             for (const item of items) {
-                for (const item of items) {
-                    try {
-                        const link = item.link;
-                        await page.goto(link, { waitUntil: 'domcontentloaded', timeout: 500 });
-                        const hrefsOnPage = await page.$$eval('a', anchors => anchors.map(a => a.href));
-                        allLinks.push(...hrefsOnPage);
-                    } catch (error) { continue }
-                }
+                try {
+                    const link = item.link;
+                    await page.goto(link, { timeout: 0 });
+                    const hrefsOnPage = await page.$$eval('a', anchors => anchors.map(a => a.href));
+                    allLinks.push(...hrefsOnPage);
+                } catch (error) { continue }
             }
             for (const strLink of allLinks) {
-                const linkRegex = /\.([a-zA-Z0-9]+)$/g;
+                let thatsok = ''; const linkRegex = /\.([a-zA-Z0-9]+)$/g;
                 if (strLink.match(linkRegex)) {
                     strLink.replace(linkRegex, (match, one) => {
                         for (const mime of mimes) {
                             if (mime.ext === one && one === fmime) {
-                                flinkm.push(`${strLink}\n${mime.desc}`);
+                                flinkm.push(`${strLink} \n${mime.desc}`);
+                                thatsok = 'finish';
+                                return;
                             }
                         }
                     });
+                }
+                if (thatsok.length > 0) {
+                    break;
                 }
             }
             await page.close();
@@ -59,7 +63,7 @@ export class Bootfunc {
     }
     async Weather(from) {
         let link = `https://www.google.com/search?q=${from} weather`;
-        await page.goto(link, { waitUntil: 'domcontentloaded', timeout: 500 });
+        await page.goto(link, { waitUntil: 'domcontentloaded', timeout: 0 });
         const textValue = await page.$eval('.UQt4rd', el => el.innerText);
         if (textValue) {
             return textValue;
@@ -67,12 +71,12 @@ export class Bootfunc {
     }
     async getSumarizeINF(SearchG, property) {
         const ceuser = new Code_Edit_Used;
-        const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }) || console.log('no api key'); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' }) || console.log('no search engine id');
-        let All = [];
+        const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' });
+        if (apiKey == '<=DA<apikey>TA=>' || searchEngineId == '<=DA<searchengineid>TA=>') { Info('0'); return ''}
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&q=${SearchG}`;
         const response = await fetch(url);
         const data = await response.json();
-        const { items } = data;
+        const { items } = data;let All = [];
         if (data && Array.isArray(items) && items.length > 0) {
             All.push(items[0][property]);
         }
@@ -81,7 +85,8 @@ export class Bootfunc {
     }
     async GoogleDATA(SearchG, Element, Setting) {
         const ceuser = new Code_Edit_Used;
-        const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }) || console.log('no api key'); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' }) || console.log('no search engine id');
+        const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' });
+        if (apiKey == '<=DA<apikey>TA=>' || searchEngineId == '<=DA<searchengineid>TA=>') { Info('0'); return ''}
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&q=${SearchG}`;
         try {
             let num = '';
@@ -104,7 +109,7 @@ export class Bootfunc {
                         case "text":
                             try {
                                 await page.reload();
-                                await page.waitForSelector(Element, { timeout: 500 });
+                                await page.waitForSelector(Element, { timeout: 0 });
                                 const elements = await page.$$(Element);
                                 const textResults = await Promise.all(
                                     elements.map(async (element) => {
@@ -158,6 +163,7 @@ export class Bootfunc {
         }
     }
 }
+
 export class Control {
     /**
  * @description code: value 0-3
@@ -1246,7 +1252,7 @@ export class CreateQuery {
         }
         return value || 'something';
     }
-     async selectWordsBasedOnQueryAndMood (query, mood, wordsData, data, user)  {
+    async selectWordsBasedOnQueryAndMood(query, mood, wordsData, data, user) {
         const ceu = new Code_Edit_Used;
         const knownParams = [
             "name", "age", "job", "location", "hobby", "email", "gender", "education",
@@ -1262,12 +1268,12 @@ export class CreateQuery {
         const queryMethods = queryData?.methods || [];
         const queryAdjectives = queryData?.adjectives || [];
         const queryVerbs = queryData?.verb || [];
-    
+
         let verb = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Verb")));
         let noun = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Noun")));
         let adjective = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Adjective")));
         let conjunction = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Conjunction")));
-    
+
         const filterByQuery = (words, queryArray) => {
             return words.filter(word => {
                 return queryArray.some(query => {
@@ -1280,7 +1286,7 @@ export class CreateQuery {
                 });
             });
         };
-    
+
         const resolveObjectToString = (obj) => {
             if (typeof obj === 'string') {
                 return obj;
@@ -1292,7 +1298,7 @@ export class CreateQuery {
             }
             return '';
         };
-    
+
         if (queryObjects.length > 0) noun = filterByQuery(noun, queryObjects);
         if (queryPlaces.length > 0) noun = filterByQuery(noun, queryPlaces);
         if (queryPersons.length > 0) noun = filterByQuery(noun, queryPersons);
@@ -1301,7 +1307,7 @@ export class CreateQuery {
         if (queryMethods.length > 0) noun = filterByQuery(noun, queryMethods);
         if (queryAdjectives.length > 0) adjective = filterByQuery(adjective, queryAdjectives);
         if (queryVerbs.length > 0) verb = filterByQuery(verb, queryVerbs);
-    
+
         const moodFilters = {
             Happy: { adjective: ["happy", "joyful", "excited"], verb: ["celebrate", "enjoy", "laugh"] },
             Angry: { adjective: ["angry", "frustrated", "irritated"], verb: ["fight", "argue", "shout"] },
@@ -1309,16 +1315,16 @@ export class CreateQuery {
             Scared: { adjective: ["scared", "worried", "nervous"], verb: ["flee", "hide", "shiver"] },
             Suspicious: { adjective: ["suspicious", "doubtful", "questioning"], verb: ["question", "suspect", "distrust"] }
         };
-    
+
         const moodFilter = moodFilters[mood] || { adjective: [], verb: [] };
-    
+
         if (moodFilter.adjective.length > 0) {
             adjective = adjective.filter(word => moodFilter.adjective.some(moodWord => word.word.includes(moodWord)));
         }
         if (moodFilter.verb.length > 0) {
             verb = verb.filter(word => moodFilter.verb.some(moodWord => word.word.includes(moodWord)));
         }
-    
+
         const selectBestWord = (words) => {
             if (!words.length) return null;
             let maxScore = 0;
@@ -1341,7 +1347,7 @@ export class CreateQuery {
             }
             return bestWord ? bestWord.word : null;
         };
-    
+
         const extractWordsAndNumbers = (query) => {
             const regex = /\b(\w+|\d+(\.\d+)?)\b/g;
             let match;
@@ -1356,10 +1362,10 @@ export class CreateQuery {
         let selectedNoun = selectBestWord(noun) || faker.hacker.noun();
         let selectedAdjective = selectBestWord(adjective) || faker.hacker.adjective();
         let selectedConjunction = selectBestWord(conjunction) || faker.word;
-    
+
         extractedWords.forEach(word => {
             if (verb.some(v => v.word === word)) {
-                selectedVerb = word === 'complement' ? '' : word; 
+                selectedVerb = word === 'complement' ? '' : word;
             }
             if (noun.some(n => n.word === word)) {
                 selectedNoun = word;
@@ -1371,7 +1377,7 @@ export class CreateQuery {
                 selectedNoun = word;
             }
         });
-    
+
         const requestedParam = knownParams.find(param => query.includes(param));
         if (requestedParam) {
             const isTalkingAboutSelf = /^(my|i am|i\'m|my name|i'm)/.test(query);
@@ -1394,14 +1400,14 @@ export class CreateQuery {
                 };
             }
         }
-    
+
         return {
             selectedVerb: [selectedVerb],
             selectedNoun: [selectedNoun],
             selectedAdjective: [selectedAdjective],
             selectedConjunction: [selectedConjunction]
         };
-    }; 
+    };
     async loadWordData() {
         const filePath = './AllData/QueryAnalayzing.json';
         const data = await fsp.readFile(filePath, 'utf8');
@@ -1532,18 +1538,25 @@ export class Norology {
             const isWeatherQuery = doc.has('weather') || doc.has('forecast') || doc.has('current weather');
             const isGoogleQuery = doc.has('how to') || doc.has('define') || doc.has('explain') || doc.has('tell me about') || doc.has('what is') && !doc.has('what is you');
             const isFileLinkQuery = doc.has('link') || doc.has('file') || doc.has('download') || doc.has('get');
-            if (isWeatherQuery) {
-                query = query + ' you found weather data ' + await USF('weather');
-            }
-            else if (isGoogleQuery) {
-                query = query + ' you found info ' + await USF('google');
-            }
-            else if (isFileLinkQuery) {
-                query = query + ' you found file link ' + await USF('file');
-            }
+            const isDateQuery = doc.has('date');
+            const isTimeQuery = doc.has('time');
             const SU = new SUAI();
+            let value = '';
             if (await SU.EvalSU(query)) {
-                query = query + 'you found answer' + await SU.EvalSU(query);
+                query = query + ' you found answer ' + await SU.EvalSU(query);
+            }
+            if (isWeatherQuery) {
+                value = await USF('weather', data);
+            } else if (isGoogleQuery) {
+                value = await USF('google');
+            } else if (isFileLinkQuery) {
+                value = await USF('file');
+            }
+            else if (isDateQuery) {
+                value = await USF('date');
+            }
+            else if (isTimeQuery) {
+                value = await USF('time');
             }
             let templateChoice = generalReplyTemplates;
             if (query.includes('health') || query.includes('fitness')) {
@@ -1566,7 +1579,7 @@ export class Norology {
             const template = templateChoice[Math.floor(Math.random() * templateChoice.length)];
             let finalReply = template.replace("{subject}", data.username || "Bro")
                 .replace("{verb}", await getSafeString(selectedVerb))
-                .replace("{complement}", await getSafeString(dynamicComplement))
+                .replace("{complement}", await getSafeString(value === '' ? dynamicComplement : value))
                 .replace("{adjective}", await getSafeString(selectedAdjective))
                 .replace("{conjunction}", await getSafeString(selectedConjunction));
             const placeholders = ["{subject}", "{verb}", "{complement}", "{adjective}", "{conjunction}"];
@@ -1577,8 +1590,7 @@ export class Norology {
                     } else if (placeholder === "{verb}") {
                         finalReply = finalReply.replace(placeholder, await getSafeString(selectedVerb));
                     } else if (placeholder === "{complement}") {
-                        const finalComplement = await getSafeString(dynamicComplement);
-                        finalReply = finalReply.replace(placeholder, await getSafeString(finalComplement));
+                        finalReply = finalReply.replace(placeholder, await getSafeString(dynamicComplement));
                     } else if (placeholder === "{adjective}") {
                         finalReply = finalReply.replace(placeholder, await getSafeString(selectedAdjective));
                     } else if (placeholder === "{conjunction}") {
@@ -1586,27 +1598,34 @@ export class Norology {
                     }
                 }
             }
+
             return finalReply.trim();
         }
-        const USF = async (use) => {
+        const USF = async (use, data) => {
             if (use == 'weather') {
                 try {
                     const location = data.userlocation || '';
                     const weatherData = await bot.Weather(location);
-                    return `The weather in ${location || 'your location'} is currently: \n${weatherData}.`;
+                    if (location) { return `The weather in ${location || 'your location'} is currently: \n${weatherData}.` }
+                    else { return 'Where are you from?' }
                 }
                 catch {
-                    return 'Where are you from?';
+                    return 'Error!';
                 }
             }
             else if (use == 'file') {
-                let matchedFile = query.match(fileLinkQueryRegex);
-                if (matchedFile && matchedFile.length > 0) {
-                    let fileType = matchedFile[matchedFile.length - 1].toLowerCase();
-                    const refile = await bot.File(query, fileType);
-                    let replacement = refile.length > 1 ? refile.join(', ') : refile[0];
-                    return `Here are the links I found for ${fileType} files: ${replacement}` + ' ';
-                }
+                let fext = '';
+                let sword = query.split(' ');
+                sword.forEach(ext => {
+                    for (let i = 0; i < mimes.length; i++) {
+                        if (ext.toLowerCase() === mimes[i].ext) {
+                            fext = mimes[i].ext;
+                        }
+                    }
+                });
+                const refile = await bot.File(query, fext);
+                if (fext.length > 0) { return `Here are the links I found for ${fext} files: ${refile}` + ' ' }
+                else { return '' }
             }
             else if (use == 'google') {
                 const replacequestion = new RegExp(`^${query}`, 'g');
@@ -1614,6 +1633,12 @@ export class Norology {
                 if (googleSummary == undefined || '' || null) { googleSummary = await bot.getSumarizeINF(query, 'snippet') }
                 googleSummary = googleSummary.replace(replacequestion, '') || '{complement}';
                 return googleSummary + ' ';
+            }
+            else if (use == 'date') {
+               return (new Date).toDateString();
+            }
+            else if (use == 'time') {
+                return (new Date).toTimeString();
             }
         }
         async function getSafeString(value) {
@@ -1640,12 +1665,12 @@ export class Norology {
             const queryMethods = queryData?.methods || [];
             const queryAdjectives = queryData?.adjectives || [];
             const queryVerbs = queryData?.verb || [];
-        
+
             let verb = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Verb")));
             let noun = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Noun")));
             let adjective = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Adjective")));
             let conjunction = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Conjunction")));
-        
+
             const filterByQuery = (words, queryArray) => {
                 return words.filter(word => {
                     return queryArray.some(query => {
@@ -1658,7 +1683,7 @@ export class Norology {
                     });
                 });
             };
-        
+
             const resolveObjectToString = (obj) => {
                 if (typeof obj === 'string') {
                     return obj;
@@ -1670,7 +1695,7 @@ export class Norology {
                 }
                 return '';
             };
-        
+
             if (queryObjects.length > 0) noun = filterByQuery(noun, queryObjects);
             if (queryPlaces.length > 0) noun = filterByQuery(noun, queryPlaces);
             if (queryPersons.length > 0) noun = filterByQuery(noun, queryPersons);
@@ -1679,7 +1704,7 @@ export class Norology {
             if (queryMethods.length > 0) noun = filterByQuery(noun, queryMethods);
             if (queryAdjectives.length > 0) adjective = filterByQuery(adjective, queryAdjectives);
             if (queryVerbs.length > 0) verb = filterByQuery(verb, queryVerbs);
-        
+
             const moodFilters = {
                 Happy: { adjective: ["happy", "joyful", "excited"], verb: ["celebrate", "enjoy", "laugh"] },
                 Angry: { adjective: ["angry", "frustrated", "irritated"], verb: ["fight", "argue", "shout"] },
@@ -1687,16 +1712,16 @@ export class Norology {
                 Scared: { adjective: ["scared", "worried", "nervous"], verb: ["flee", "hide", "shiver"] },
                 Suspicious: { adjective: ["suspicious", "doubtful", "questioning"], verb: ["question", "suspect", "distrust"] }
             };
-        
+
             const moodFilter = moodFilters[mood] || { adjective: [], verb: [] };
-        
+
             if (moodFilter.adjective.length > 0) {
                 adjective = adjective.filter(word => moodFilter.adjective.some(moodWord => word.word.includes(moodWord)));
             }
             if (moodFilter.verb.length > 0) {
                 verb = verb.filter(word => moodFilter.verb.some(moodWord => word.word.includes(moodWord)));
             }
-        
+
             const selectBestWord = (words) => {
                 if (!words.length) return null;
                 let maxScore = 0;
@@ -1719,7 +1744,7 @@ export class Norology {
                 }
                 return bestWord ? bestWord.word : null;
             };
-        
+
             const extractWordsAndNumbers = (query) => {
                 const regex = /\b(\w+|\d+(\.\d+)?)\b/g;
                 let match;
@@ -1734,10 +1759,10 @@ export class Norology {
             let selectedNoun = selectBestWord(noun) || faker.hacker.noun();
             let selectedAdjective = selectBestWord(adjective) || faker.hacker.adjective();
             let selectedConjunction = selectBestWord(conjunction) || faker.word;
-        
+
             extractedWords.forEach(word => {
                 if (verb.some(v => v.word === word)) {
-                    selectedVerb = word === 'complement' ? '' : word; 
+                    selectedVerb = word === 'complement' ? '' : word;
                 }
                 if (noun.some(n => n.word === word)) {
                     selectedNoun = word;
@@ -1749,7 +1774,7 @@ export class Norology {
                     selectedNoun = word;
                 }
             });
-        
+
             const requestedParam = knownParams.find(param => query.includes(param));
             if (requestedParam) {
                 const isTalkingAboutSelf = /^(my|i am|i\'m|my name|i'm)/.test(query);
@@ -1772,14 +1797,14 @@ export class Norology {
                     };
                 }
             }
-        
+
             return {
                 selectedVerb: [selectedVerb],
                 selectedNoun: [selectedNoun],
                 selectedAdjective: [selectedAdjective],
                 selectedConjunction: [selectedConjunction]
             };
-        };        
+        };
         const getReplyUntilValid = async (query, user) => {
             let reply = '';
 
@@ -1925,18 +1950,19 @@ class SUAI {
             complexConjugate: (a) => ({ real: a.real, imag: -a.imag }),
             complexMagnitude: (a) => Math.sqrt(a.real * a.real + a.imag * a.imag)
         };
-
+        let queryfixed = '';
+        const operatorRegex = /(plus|minus|multiply|divide|sqrt|power|mod|log|exp|factorial|max|min|gcd|lcm|transpose|inverse|determinant|rank|derivative|integral|solve|solveSystem|polynomial|parabola|sin|cos|tan|asin|acos|atan|log10|log2|floor|ceil|round|random|matrix|binomial|normalDistribution|complexAdd|complexMultiply|complexConjugate|complexMagnitude)/g;
         function solveMathExpression(sentence) {
+            queryfixed = sentence;
             let words = sentence.toLowerCase().split(/\s+/);
             const numberRegex = /\b\d+(\.\d+)?\b/g;
-            const operatorRegex = /(plus|minus|multiply|divide|sqrt|power|mod|log|exp|factorial|max|min|gcd|lcm|transpose|inverse|determinant|rank|derivative|integral|solve|solveSystem|polynomial|parabola|sin|cos|tan|asin|acos|atan|log10|log2|floor|ceil|round|random|matrix|binomial|normalDistribution|complexAdd|complexMultiply|complexConjugate|complexMagnitude)/g;
             let result = 0;
             let numbers = words.filter(word => numberRegex.test(word)).map(word => parseFloat(word));
             let operators = words.filter(word => operatorRegex.test(word));
             if (numbers.length === 0) {
                 return '';
             }
-            result = numbers[0];let currentResult = result;
+            result = numbers[0]; let currentResult = result;
             for (let i = 1; i < numbers.length; i++) {
                 let operator = operators[i - 1];
                 let number = numbers[i];
@@ -1974,7 +2000,7 @@ class SUAI {
                             break;
                         case 'factorial':
                             if (Number.isInteger(currentResult) && currentResult >= 0) {
-                                currentResult = math.factorial(currentResult);  
+                                currentResult = math.factorial(currentResult);
                             } else {
                                 throw new Error('Factorial requires a non-negative integer');
                             }
@@ -2066,7 +2092,8 @@ class SUAI {
             return ' ' + currentResult.toString();
         }
         let result = solveMathExpression(query.replaceAll("!", " factorial").replaceAll("+", " plus").replaceAll("-", " minus").replaceAll("*", " multiply").replaceAll("/", " divide").replaceAll("%", " mod").replaceAll("^", " power"));
-        return result.toString();
+        if (operatorRegex.test(queryfixed)) { return result.toString() }
+        else { return '' }
     }
     async AISU() {
 
@@ -2077,3 +2104,21 @@ class SUAI {
     };
     console.warn = function () { };
 })();
+function Info(param) {
+    switch (param) {
+        case '0':
+            console.log(`\x1b[92m
+                No API key or No Search engine id or both! 
+                Note: When getting data from the internet, you may need 
+                a search engine id with Google Search API. Write these values ​​with writeData.
+                How do you define the 2 parameters?\x1b[0m 
+                \x1b[95m import\x1b[0m \x1b[94m { SUPER_USER_AI } \x1b[0m\x1b[95m from \x1b[0m \x1b[93m"s.u.a.i"\x1b[0m;
+                \x1b[34m const\x1b[0m\x1b[94m SU \x1b[0m=\x1b[94m new \x1b[0m \x1b[92mSUPER_USER_AI \x1b[0m;
+                \x1b[95m await\x1b[0m\x1b[34m SU\x1b[0m\x1b[93m.writeData\x1b[0m\x1b[37m(\x1b[0m\x1b[93m"apikey"\x1b[0m,\x1b[93m"apikey"\x1b[0m\x1b[37m)\x1b[0m;
+                \x1b[95m await\x1b[0m\x1b[34m SU\x1b[0m\x1b[93m.writeData\x1b[0m\x1b[37m(\x1b[0m\x1b[93m"searchengineid"\x1b[0m,\x1b[93m"searchengineid"\x1b[0m\x1b[37m)\x1b[0m;
+                `);
+            break;
+        default:
+            break;
+    }
+}

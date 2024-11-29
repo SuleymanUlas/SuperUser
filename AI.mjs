@@ -47,7 +47,7 @@ export async function SU_QUERY(DataSU, User, Query, Reply, filename) {
             await memory.Memory({
                 process: 'write',
                 query: Query,
-                reply: replysreturn || Reply,
+                reply: (replysreturn || Reply).replaceAll(/\n/g, ''),
                 feel: status,
                 score: scorepoint
             }, User);
