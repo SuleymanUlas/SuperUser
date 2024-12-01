@@ -20,7 +20,6 @@ let status = 'Happy';
 export async function SU_QUERY(DataSU, User, Query, Reply, filename) {
     try {
         const sentiment = new Sentiment;
-        const feels = await fell.Data(User);
         let scorepoint = 0.3;
         if (Query) {
             if (Query.includes('important')) { scorepoint = 0.6 }

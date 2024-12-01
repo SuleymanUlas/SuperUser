@@ -21,7 +21,7 @@ export class Bootfunc {
     async File(SearchF, fmime) {
         const ceuser = new Code_Edit_Used;
         const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' });
-        if (apiKey == '<=DA<apikey>TA=>' || searchEngineId == '<=DA<searchengineid>TA=>') { Info('0'); return ''}
+        if (apiKey == '<=DA<apikey>TA=>' || searchEngineId == '<=DA<searchengineid>TA=>') { Info('0'); return '' }
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&q=${SearchF}`;
         const flinkm = [];
         try {
@@ -72,21 +72,21 @@ export class Bootfunc {
     async getSumarizeINF(SearchG, property) {
         const ceuser = new Code_Edit_Used;
         const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' });
-        if (apiKey == '<=DA<apikey>TA=>' || searchEngineId == '<=DA<searchengineid>TA=>') { Info('0'); return ''}
+        if (apiKey == '<=DA<apikey>TA=>' || searchEngineId == '<=DA<searchengineid>TA=>') { Info('0'); return '' }
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&q=${SearchG}`;
         const response = await fetch(url);
         const data = await response.json();
-        const { items } = data;let All = [];
+        const { items } = data; let All = [];
         if (data && Array.isArray(items) && items.length > 0) {
             All.push(items[0][property]);
         }
-        else { All = 'Not found!' }
+        else { All = 'Not found!'; }
         return All;
     }
     async GoogleDATA(SearchG, Element, Setting) {
         const ceuser = new Code_Edit_Used;
         const apiKey = await ceuser.UserData('Default', { prp: 'read', param: 'apikey' }); const searchEngineId = await ceuser.UserData('Default', { prp: 'read', param: 'searchengineid' });
-        if (apiKey == '<=DA<apikey>TA=>' || searchEngineId == '<=DA<searchengineid>TA=>') { Info('0'); return ''}
+        if (apiKey == '<=DA<apikey>TA=>' || searchEngineId == '<=DA<searchengineid>TA=>') { Info('0'); return '' }
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&q=${SearchG}`;
         try {
             let num = '';
@@ -376,8 +376,7 @@ ${two}
                      @     @@@@       @@@      @           
                      @@      @  @@@   @@@      @           
                      @ @@@@@@   @@@     @@@@@@             
-                                                           
-                                                           
+                                                                    
                 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@     
                                `
                 const P = [
@@ -1500,9 +1499,9 @@ export class Norology {
     async Analayzing(Query, User, mapdata) {
         const memory = new Memory; let adm = await memory.Memory({ process: 'read' }, User);
         let query = Query.split(' ');
-        return await this.Parse(Query, User, mapdata);
+        return await this.Parse(Query, User, mapdata, adm);
     }
-    async Parse(query, user, mapdata) {
+    async Parse(query, user, mapdata, memory) {
         const bot = new Bootfunc;
         let querymemory = '';
         const mems = new Memory;
@@ -1517,6 +1516,34 @@ export class Norology {
             const parsedData = JSON.parse(data);
             return parsedData;
         }
+        const fd = new Fell;
+        const feels = await fd.Data(user);
+        const maxValue = Math.max(...Object.values(feels));
+        const maxKey = Object.keys(feels).find(key => feels[key] === maxValue);
+        let feel = '';
+        switch (maxKey) {
+            case 'Hqx':
+                feel = 'Happy';
+                break;
+            case 'Aqx':
+                feel = 'Angry';
+                break;
+            case 'Sqx':
+                feel = 'Scared';
+                break;
+            case 'Saqx':
+                feel = 'Sad';
+                break;
+            case 'Suqx':
+                feel = 'Suspect';
+                break;
+            case 'Default':
+                feel = 'Happy';
+                break;
+            default:
+                feel = 'Happy';
+                break;
+        }
         const templates = JSON.parse(await fsp.readFile('./AllData/ReplyTemplates.json'));
         const generalReplyTemplates = templates.generalReplyTemplates;
         const personalReplyTemplates = templates.personalReplyTemplates;
@@ -1526,7 +1553,8 @@ export class Norology {
         const workReplyTemplates = templates.workReplyTemplates;
         const emotionalReplyTemplates = templates.emotionalReplyTemplates;
         const supportReplyTemplates = templates.supportReplyTemplates;
-        async function generatePersonalizedReply(query, user) {
+
+        async function generatePersonalizedReply(query, user, mapdata, memory) {
             let wordsData = await loadWordData();
             let data = await ceu.UserData(user, { prp: 'all' });
             const botInfo = {};
@@ -1536,7 +1564,7 @@ export class Norology {
             });
             let doc = nlp(query);
             const isWeatherQuery = doc.has('weather') || doc.has('forecast') || doc.has('current weather');
-            const isGoogleQuery = doc.has('how to') || doc.has('define') || doc.has('explain') || doc.has('tell me about') || doc.has('what is') && !doc.has('what is you');
+            const isGoogleQuery = doc.has('how to') || doc.has('define') || doc.has('explain') || doc.has('tell me about') || (doc.has('what is') && !doc.has('what is you') && !doc.has('what is me'));
             const isFileLinkQuery = doc.has('link') || doc.has('file') || doc.has('download') || doc.has('get');
             const isDateQuery = doc.has('date');
             const isTimeQuery = doc.has('time');
@@ -1574,7 +1602,7 @@ export class Norology {
             } else {
                 templateChoice = Math.random() > 0.5 ? personalReplyTemplates : generalReplyTemplates;
             }
-            const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await selectWordsBasedOnQueryAndMood(query, 'Neutral', wordsData, mapdata);
+            const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await selectWordsBasedOnQueryAndMood(query, feel, wordsData, mapdata,memory);
             let dynamicComplement = selectedNoun;
             const template = templateChoice[Math.floor(Math.random() * templateChoice.length)];
             let finalReply = template.replace("{subject}", data.username || "Bro")
@@ -1598,7 +1626,6 @@ export class Norology {
                     }
                 }
             }
-
             return finalReply.trim();
         }
         const USF = async (use, data) => {
@@ -1630,12 +1657,18 @@ export class Norology {
             else if (use == 'google') {
                 const replacequestion = new RegExp(`^${query}`, 'g');
                 let googleSummary = await bot.GoogleDATA(query, 'body', 'text') || '';
-                if (googleSummary == undefined || '' || null) { googleSummary = await bot.getSumarizeINF(query, 'snippet') }
-                googleSummary = googleSummary.replace(replacequestion, '') || '{complement}';
+                if (!googleSummary || googleSummary.trim() === '') {
+                    googleSummary = await bot.getSumarizeINF(query, 'snippet') || '';
+                }
+                if (googleSummary) {
+                    googleSummary = googleSummary.replace(replacequestion, '').trim();
+                    googleSummary = googleSummary.replace(/\s+/g, ' ');
+                    googleSummary = googleSummary || '{complement}';
+                }
                 return googleSummary + ' ';
             }
             else if (use == 'date') {
-               return (new Date).toDateString();
+                return (new Date).toDateString();
             }
             else if (use == 'time') {
                 return (new Date).toTimeString();
@@ -1655,7 +1688,19 @@ export class Norology {
             "phone", "socialMedia", "maritalStatus", "languages", "skills", "favoriteFood",
             "travelExperience", "pets", "goals", "favoriteColor", "diet", "music", "fitness"
         ];
-        const selectWordsBasedOnQueryAndMood = async (query, mood, wordsData, data) => {
+        const selectWordsBasedOnQueryAndMood = async (query, mood, wordsData, data, mem) => {
+            let memory = '';
+            if (mem == 'Not found!') {
+                memory = [
+                    {
+                        Query: 'how are you?',
+                        Reply: 'I\'m fine thank you!',
+                        Fell: 'Happy'
+                    }
+                ];
+            } else {
+                memory = mem;
+            }
             const queryData = data && Array.isArray(data) ? data[0] : {};
             const queryObjects = queryData?.objects || [];
             const queryPlaces = queryData?.places || [];
@@ -1665,12 +1710,10 @@ export class Norology {
             const queryMethods = queryData?.methods || [];
             const queryAdjectives = queryData?.adjectives || [];
             const queryVerbs = queryData?.verb || [];
-
             let verb = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Verb")));
             let noun = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Noun")));
             let adjective = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Adjective")));
             let conjunction = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Conjunction")));
-
             const filterByQuery = (words, queryArray) => {
                 return words.filter(word => {
                     return queryArray.some(query => {
@@ -1683,7 +1726,6 @@ export class Norology {
                     });
                 });
             };
-
             const resolveObjectToString = (obj) => {
                 if (typeof obj === 'string') {
                     return obj;
@@ -1695,7 +1737,6 @@ export class Norology {
                 }
                 return '';
             };
-
             if (queryObjects.length > 0) noun = filterByQuery(noun, queryObjects);
             if (queryPlaces.length > 0) noun = filterByQuery(noun, queryPlaces);
             if (queryPersons.length > 0) noun = filterByQuery(noun, queryPersons);
@@ -1704,7 +1745,6 @@ export class Norology {
             if (queryMethods.length > 0) noun = filterByQuery(noun, queryMethods);
             if (queryAdjectives.length > 0) adjective = filterByQuery(adjective, queryAdjectives);
             if (queryVerbs.length > 0) verb = filterByQuery(verb, queryVerbs);
-
             const moodFilters = {
                 Happy: { adjective: ["happy", "joyful", "excited"], verb: ["celebrate", "enjoy", "laugh"] },
                 Angry: { adjective: ["angry", "frustrated", "irritated"], verb: ["fight", "argue", "shout"] },
@@ -1712,16 +1752,20 @@ export class Norology {
                 Scared: { adjective: ["scared", "worried", "nervous"], verb: ["flee", "hide", "shiver"] },
                 Suspicious: { adjective: ["suspicious", "doubtful", "questioning"], verb: ["question", "suspect", "distrust"] }
             };
-
-            const moodFilter = moodFilters[mood] || { adjective: [], verb: [] };
-
-            if (moodFilter.adjective.length > 0) {
-                adjective = adjective.filter(word => moodFilter.adjective.some(moodWord => word.word.includes(moodWord)));
+            const containsMoodQuery = (query) => {
+                const moodKeywords = ["how are you", "feel", "mood", "happy", "sad", "angry", "scared"];
+                return moodKeywords.some(keyword => query.toLowerCase().includes(keyword));
+            };
+            if (containsMoodQuery(query)) {
+                const moodFilter = moodFilters[mood] || { adjective: [], verb: [] };
+        
+                if (moodFilter.adjective.length > 0) {
+                    adjective = adjective.filter(word => moodFilter.adjective.some(moodWord => word.word.includes(moodWord)));
+                }
+                if (moodFilter.verb.length > 0) {
+                    verb = verb.filter(word => moodFilter.verb.some(moodWord => word.word.includes(moodWord)));
+                }
             }
-            if (moodFilter.verb.length > 0) {
-                verb = verb.filter(word => moodFilter.verb.some(moodWord => word.word.includes(moodWord)));
-            }
-
             const selectBestWord = (words) => {
                 if (!words.length) return null;
                 let maxScore = 0;
@@ -1744,7 +1788,6 @@ export class Norology {
                 }
                 return bestWord ? bestWord.word : null;
             };
-
             const extractWordsAndNumbers = (query) => {
                 const regex = /\b(\w+|\d+(\.\d+)?)\b/g;
                 let match;
@@ -1759,7 +1802,20 @@ export class Norology {
             let selectedNoun = selectBestWord(noun) || faker.hacker.noun();
             let selectedAdjective = selectBestWord(adjective) || faker.hacker.adjective();
             let selectedConjunction = selectBestWord(conjunction) || faker.word;
-
+            const previousMemory = memory.find(entry => entry.Query.toLowerCase() === query.toLowerCase());
+            
+            if (previousMemory) {
+                const previousMood = previousMemory.Fell;
+                const previousMoodFilter = moodFilters[previousMood] || { adjective: [], verb: [] };
+                if (previousMoodFilter.adjective.length > 0) {
+                    adjective = adjective.filter(word => previousMoodFilter.adjective.some(moodWord => word.word.includes(moodWord)));
+                }
+                if (previousMoodFilter.verb.length > 0) {
+                    verb = verb.filter(word => previousMoodFilter.verb.some(moodWord => word.word.includes(moodWord)));
+                }
+                selectedVerb = selectBestWord(verb) || faker.hacker.verb();
+                selectedAdjective = selectBestWord(adjective) || faker.hacker.adjective();
+            }
             extractedWords.forEach(word => {
                 if (verb.some(v => v.word === word)) {
                     selectedVerb = word === 'complement' ? '' : word;
@@ -1774,11 +1830,10 @@ export class Norology {
                     selectedNoun = word;
                 }
             });
-
             const requestedParam = knownParams.find(param => query.includes(param));
             if (requestedParam) {
-                const isTalkingAboutSelf = /^(my|i am|i\'m|my name|i'm)/.test(query);
-                const isTalkingAboutUser = /^(your|you|are you|do you|what is your)/.test(query);
+                const isTalkingAboutSelf = /(my|i am|i\'m|my name|i'm)/.test(query);
+                const isTalkingAboutUser = /(your|you|are you|do you)/.test(query);
                 const udata = await ceu.UserData(user, { prp: 'all' });
                 let formattedParam = requestedParam.charAt(0).toUpperCase() + requestedParam.slice(1);
                 if (isTalkingAboutUser) {
@@ -1797,19 +1852,18 @@ export class Norology {
                     };
                 }
             }
-
             return {
                 selectedVerb: [selectedVerb],
                 selectedNoun: [selectedNoun],
                 selectedAdjective: [selectedAdjective],
                 selectedConjunction: [selectedConjunction]
             };
-        };
+        };              
         const getReplyUntilValid = async (query, user) => {
             let reply = '';
 
             while (!reply.trim()) {
-                reply = await generatePersonalizedReply(query, user);
+                reply = await generatePersonalizedReply(query, user, mapdata, memory);
             }
             return reply;
         };
@@ -1959,9 +2013,7 @@ class SUAI {
             let result = 0;
             let numbers = words.filter(word => numberRegex.test(word)).map(word => parseFloat(word));
             let operators = words.filter(word => operatorRegex.test(word));
-            if (numbers.length === 0) {
-                return '';
-            }
+            if (numbers.length === 0) { return '' }
             result = numbers[0]; let currentResult = result;
             for (let i = 1; i < numbers.length; i++) {
                 let operator = operators[i - 1];
@@ -2100,15 +2152,14 @@ class SUAI {
     }
 }
 (function () {
-    console.error = function () {
-    };
+    console.error = function () { };
     console.warn = function () { };
 })();
 function Info(param) {
     switch (param) {
         case '0':
             console.log(`\x1b[92m
-                No API key or No Search engine id or both! 
+                No API key or No Search engine id or both!
                 Note: When getting data from the internet, you may need 
                 a search engine id with Google Search API. Write these values ​​with writeData.
                 How do you define the 2 parameters?\x1b[0m 

@@ -12,4 +12,3 @@ const answers = await inquirer.prompt([
   console.log(`\x1b[92m${await AI.AI(await answers.question)}\x1b[0m`);
   await query(); 
 };await query();
- 
