@@ -10,9 +10,14 @@
     <hr>
     <pre align="center">
 
+**Usage Example**
 ```javascript
-const AI = new SUPER_USER_AI;
-console.log(await AI.AI('How are you'));
+  const AllData = await AI.AI(await answers.question);
+  console.log(`\x1b[92m${(JSON.stringify(AllData, null, 2).replaceAll(/\n\n/g, '\n'))}\x1b[0m`);
+  /*** @example For example ***/
+console.log(`\x1b[93m${AllData.Train}\x1b[0m`);
+console.log(`\x1b[93m${AllData.AI}\x1b[0m`);
+console.log(`\x1b[93m${AllData.Question}\x1b[0m`);
 ```
 This project is designed to create unique, context-based responses to user queries using AI. The AI generates personalized answers based on its trained data and can respond to a wide range of user inputs.
 

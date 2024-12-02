@@ -10,10 +10,9 @@ const mimes = [{ ext: "pdf", desc: "Portable Document Format File" }, { ext: "jp
  * @param {*} Query 
  * @param {*} Reply 
  * @param {*} Status 
- * @param {*} User 
  * ? Usage example => sentences 
  */
-const nlpUsage = async (Query, User) => {
+const nlpUsage = async (Query) => {
     try {
         const query_doc = nlp(Query); 
         const sentences = query_doc.sentences().out('array'); 

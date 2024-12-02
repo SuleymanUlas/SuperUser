@@ -1208,12 +1208,12 @@ export class Memory {
 
 }
 export class CreateQuery {
-    async Query(User, DataSU) {
+    async Query(User) {
         const memoryparse = new Memory();
         const memorydata = await memoryparse.Memory({ process: 'read' }, User);
-        let querymemory = '';
+        let query = '';
         for (let memoryEntry of memorydata) {
-            querymemory += memoryEntry.Query + " ";
+            query += memoryEntry.Query + " ";
         }
         const fe = new Fell();
         const feData = await fe.AllData();
@@ -1230,18 +1230,65 @@ export class CreateQuery {
             case 'Default': mood = 'Neutral'; break;
             default: mood = 'Neutral'; break;
         }
+        const templates = JSON.parse(await fsp.readFile('./AllData/ReplyTemplates.json'));
+        const generalReplyTemplates = templates.generalReplyTemplates;
+        const personalReplyTemplates = templates.personalReplyTemplates;
+        const healthReplyTemplates = templates.healthReplyTemplates;
+        const careerReplyTemplates = templates.careerReplyTemplates;
+        const dietReplyTemplates = templates.dietReplyTemplates;
+        const workReplyTemplates = templates.workReplyTemplates;
+        const emotionalReplyTemplates = templates.emotionalReplyTemplates;
+        const supportReplyTemplates = templates.supportReplyTemplates;
+        let templateChoice = generalReplyTemplates;
+        if (query.includes('health') || query.includes('fitness')) {
+            templateChoice = healthReplyTemplates;
+        } else if (query.includes('diet') || query.includes('nutrition')) {
+            templateChoice = dietReplyTemplates;
+        } else if (query.includes('career') || query.includes('job')) {
+            templateChoice = careerReplyTemplates;
+        } else if (query.includes('work') || query.includes('productivity')) {
+            templateChoice = workReplyTemplates;
+        } else if (query.includes('emotion') || query.includes('mood')) {
+            templateChoice = emotionalReplyTemplates;
+        } else if (query.includes('support') || query.includes('help')) {
+            templateChoice = supportReplyTemplates;
+        } else {
+            templateChoice = Math.random() > 0.5 ? personalReplyTemplates : generalReplyTemplates;
+        }
         const wordsData = await this.loadWordData();
-        const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await this.selectWordsBasedOnQueryAndMood(querymemory, mood, wordsData, User);
-        let question = await this.generateQuestion(querymemory, User, selectedVerb, selectedNoun, selectedAdjective, selectedConjunction);
+        const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await this.selectWordsBasedOnQueryAndMood(query, mood, wordsData, User);
+        let dynamicComplement = selectedNoun;
+        const template = templateChoice[Math.floor(Math.random() * templateChoice.length)];
+        let finalReply = template.replace("{subject}", "you")
+            .replace("{verb}", await this.getSafeString(selectedVerb))
+            .replace("{complement}", await this.getSafeString(dynamicComplement))
+            .replace("{adjective}", await this.getSafeString(selectedAdjective))
+            .replace("{conjunction}", await this.getSafeString(selectedConjunction));
+        const placeholders = ["{subject}", "{verb}", "{complement}", "{adjective}", "{conjunction}"];
+        for (let placeholder of placeholders) {
+            while (finalReply.includes(placeholder)) {
+                if (placeholder === "{subject}") {
+                    finalReply = finalReply.replace(placeholder, "you");
+                } else if (placeholder === "{verb}") {
+                    finalReply = finalReply.replace(placeholder, await this.getSafeString(selectedVerb));
+                } else if (placeholder === "{complement}") {
+                    finalReply = finalReply.replace(placeholder, await this.getSafeString(dynamicComplement));
+                } else if (placeholder === "{adjective}") {
+                    finalReply = finalReply.replace(placeholder, await this.getSafeString(selectedAdjective));
+                } else if (placeholder === "{conjunction}") {
+                    finalReply = finalReply.replace(placeholder, await this.getSafeString(selectedConjunction));
+                }
+            }
+        }
+        async function fixsentences(text) {
+            if (isNaN(text.charAt(0))) {
+                return (text.charAt(0).toUpperCase() + text.slice(1)).replace(/\s+/g, ' ');
+            }
+            return text.replace(/\s+/g, ' ');
+        }
+        return await fixsentences(finalReply.trim());
+    }
 
-        return question;
-    }
-    async generateQuestion(query, user, selectedVerb, selectedNoun, selectedAdjective, selectedConjunction) {
-        const ceu = new Code_Edit_Used();
-        let data = await ceu.UserData(user, { prp: 'all' });
-        let question = `${data.username || "Bro"} ${selectedVerb} ${selectedNoun} when ${data.username || "Bro"} feels ${selectedAdjective}?`;
-        return question;
-    }
     async getSafeString(value) {
         if (typeof value === 'object' && value !== null) {
             if (value && value.toString) {
@@ -1251,13 +1298,29 @@ export class CreateQuery {
         }
         return value || 'something';
     }
-    async selectWordsBasedOnQueryAndMood(query, mood, wordsData, data, user) {
-        const ceu = new Code_Edit_Used;
+    async selectWordsBasedOnQueryAndMood(query, mood, wordsData, user) {
         const knownParams = [
             "name", "age", "job", "location", "hobby", "email", "gender", "education",
             "phone", "socialMedia", "maritalStatus", "languages", "skills", "favoriteFood",
             "travelExperience", "pets", "goals", "favoriteColor", "diet", "music", "fitness"
         ];
+        const mem = await (new Memory).Memory({ process: 'read' }, user);
+        let previous;
+        if (mem == 'Not found!') {
+            mem = [
+                {
+                    Query: 'how are you?',
+                    Reply: 'I\'m fine thank you!',
+                    Fell: 'Happy'
+                }
+            ];
+            previous = mem.find(entry => entry.Reply.toLowerCase());
+        }
+        else {
+            previous = mem.find(entry => entry.Reply.toLowerCase());
+        }
+        const data = await nlpUsage(previous.Reply);
+        let memory = mem;
         const queryData = data && Array.isArray(data) ? data[0] : {};
         const queryObjects = queryData?.objects || [];
         const queryPlaces = queryData?.places || [];
@@ -1267,12 +1330,10 @@ export class CreateQuery {
         const queryMethods = queryData?.methods || [];
         const queryAdjectives = queryData?.adjectives || [];
         const queryVerbs = queryData?.verb || [];
-
         let verb = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Verb")));
         let noun = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Noun")));
         let adjective = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Adjective")));
         let conjunction = wordsData.filter(word => word.tags.some(tag => tag[word.word]?.includes("Conjunction")));
-
         const filterByQuery = (words, queryArray) => {
             return words.filter(word => {
                 return queryArray.some(query => {
@@ -1285,7 +1346,6 @@ export class CreateQuery {
                 });
             });
         };
-
         const resolveObjectToString = (obj) => {
             if (typeof obj === 'string') {
                 return obj;
@@ -1297,7 +1357,6 @@ export class CreateQuery {
             }
             return '';
         };
-
         if (queryObjects.length > 0) noun = filterByQuery(noun, queryObjects);
         if (queryPlaces.length > 0) noun = filterByQuery(noun, queryPlaces);
         if (queryPersons.length > 0) noun = filterByQuery(noun, queryPersons);
@@ -1306,7 +1365,6 @@ export class CreateQuery {
         if (queryMethods.length > 0) noun = filterByQuery(noun, queryMethods);
         if (queryAdjectives.length > 0) adjective = filterByQuery(adjective, queryAdjectives);
         if (queryVerbs.length > 0) verb = filterByQuery(verb, queryVerbs);
-
         const moodFilters = {
             Happy: { adjective: ["happy", "joyful", "excited"], verb: ["celebrate", "enjoy", "laugh"] },
             Angry: { adjective: ["angry", "frustrated", "irritated"], verb: ["fight", "argue", "shout"] },
@@ -1314,16 +1372,6 @@ export class CreateQuery {
             Scared: { adjective: ["scared", "worried", "nervous"], verb: ["flee", "hide", "shiver"] },
             Suspicious: { adjective: ["suspicious", "doubtful", "questioning"], verb: ["question", "suspect", "distrust"] }
         };
-
-        const moodFilter = moodFilters[mood] || { adjective: [], verb: [] };
-
-        if (moodFilter.adjective.length > 0) {
-            adjective = adjective.filter(word => moodFilter.adjective.some(moodWord => word.word.includes(moodWord)));
-        }
-        if (moodFilter.verb.length > 0) {
-            verb = verb.filter(word => moodFilter.verb.some(moodWord => word.word.includes(moodWord)));
-        }
-
         const selectBestWord = (words) => {
             if (!words.length) return null;
             let maxScore = 0;
@@ -1346,7 +1394,6 @@ export class CreateQuery {
             }
             return bestWord ? bestWord.word : null;
         };
-
         const extractWordsAndNumbers = (query) => {
             const regex = /\b(\w+|\d+(\.\d+)?)\b/g;
             let match;
@@ -1361,7 +1408,20 @@ export class CreateQuery {
         let selectedNoun = selectBestWord(noun) || faker.hacker.noun();
         let selectedAdjective = selectBestWord(adjective) || faker.hacker.adjective();
         let selectedConjunction = selectBestWord(conjunction) || faker.word;
+        const previousMemory = memory.find(entry => entry.Query.toLowerCase() === query.toLowerCase());
 
+        if (previousMemory) {
+            const previousMood = previousMemory.Fell;
+            const previousMoodFilter = moodFilters[previousMood] || { adjective: [], verb: [] };
+            if (previousMoodFilter.adjective.length > 0) {
+                adjective = adjective.filter(word => previousMoodFilter.adjective.some(moodWord => word.word.includes(moodWord)));
+            }
+            if (previousMoodFilter.verb.length > 0) {
+                verb = verb.filter(word => previousMoodFilter.verb.some(moodWord => word.word.includes(moodWord)));
+            }
+            selectedVerb = selectBestWord(verb) || faker.hacker.verb();
+            selectedAdjective = selectBestWord(adjective) || faker.hacker.adjective();
+        }
         extractedWords.forEach(word => {
             if (verb.some(v => v.word === word)) {
                 selectedVerb = word === 'complement' ? '' : word;
@@ -1376,30 +1436,29 @@ export class CreateQuery {
                 selectedNoun = word;
             }
         });
-
+        const ceu = new Code_Edit_Used;
         const requestedParam = knownParams.find(param => query.includes(param));
         if (requestedParam) {
-            const isTalkingAboutSelf = /^(my|i am|i\'m|my name|i'm)/.test(query);
-            const isTalkingAboutUser = /^(your|you|are you|do you|what is your)/.test(query);
+            const isTalkingAboutSelf = /(my|i am|i\'m|my name|i'm)/.test(query);
+            const isTalkingAboutUser = /(your|you|are you|do you)/.test(query);
             const udata = await ceu.UserData(user, { prp: 'all' });
             let formattedParam = requestedParam.charAt(0).toUpperCase() + requestedParam.slice(1);
             if (isTalkingAboutUser) {
                 return {
                     selectedVerb: ["is"],
-                    selectedNoun: [udata[`bot${formattedParam}`] || "unknown"],
+                    selectedNoun: udata[`bot${formattedParam}`] || "unknow",
                     selectedAdjective: ["known"],
                     selectedConjunction: ["and"]
                 };
             } else if (isTalkingAboutSelf) {
                 return {
                     selectedVerb: ["is"],
-                    selectedNoun: [udata[`user${formattedParam}`] || "unknown"],
+                    selectedNoun: udata[`user${formattedParam}`] || "unknow",
                     selectedAdjective: ["known"],
                     selectedConjunction: ["and"]
                 };
             }
         }
-
         return {
             selectedVerb: [selectedVerb],
             selectedNoun: [selectedNoun],
@@ -1564,7 +1623,7 @@ export class Norology {
             });
             let doc = nlp(query);
             const isWeatherQuery = doc.has('weather') || doc.has('forecast') || doc.has('current weather');
-            const isGoogleQuery = doc.has('how to') || doc.has('define') || doc.has('explain') || doc.has('tell me about') || (doc.has('what is') && !doc.has('what is you') && !doc.has('what is me'));
+            const isGoogleQuery = doc.has('how to') || doc.has('define') || doc.has('explain') || doc.has('tell me about') || (doc.has('what is') && !doc.has('what is you') && !doc.has('what is your') && !doc.has('what is me'));
             const isFileLinkQuery = doc.has('link') || doc.has('file') || doc.has('download') || doc.has('get');
             const isDateQuery = doc.has('date');
             const isTimeQuery = doc.has('time');
@@ -1574,7 +1633,7 @@ export class Norology {
                 query = query + ' you found answer ' + await SU.EvalSU(query);
             }
             if (isWeatherQuery) {
-                value = await USF('weather', data);
+               value = await USF('weather', data);
             } else if (isGoogleQuery) {
                 value = await USF('google');
             } else if (isFileLinkQuery) {
@@ -1602,10 +1661,10 @@ export class Norology {
             } else {
                 templateChoice = Math.random() > 0.5 ? personalReplyTemplates : generalReplyTemplates;
             }
-            const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await selectWordsBasedOnQueryAndMood(query, feel, wordsData, mapdata,memory);
+            const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await selectWordsBasedOnQueryAndMood(query, feel, wordsData, mapdata, memory);
             let dynamicComplement = selectedNoun;
             const template = templateChoice[Math.floor(Math.random() * templateChoice.length)];
-            let finalReply = template.replace("{subject}", data.username || "Bro")
+            let finalReply = template.replace("{subject}", "you")
                 .replace("{verb}", await getSafeString(selectedVerb))
                 .replace("{complement}", await getSafeString(value === '' ? dynamicComplement : value))
                 .replace("{adjective}", await getSafeString(selectedAdjective))
@@ -1614,7 +1673,7 @@ export class Norology {
             for (let placeholder of placeholders) {
                 while (finalReply.includes(placeholder)) {
                     if (placeholder === "{subject}") {
-                        finalReply = finalReply.replace(placeholder, data.username || "Bro");
+                        finalReply = finalReply.replace(placeholder, "you");
                     } else if (placeholder === "{verb}") {
                         finalReply = finalReply.replace(placeholder, await getSafeString(selectedVerb));
                     } else if (placeholder === "{complement}") {
@@ -1752,20 +1811,6 @@ export class Norology {
                 Scared: { adjective: ["scared", "worried", "nervous"], verb: ["flee", "hide", "shiver"] },
                 Suspicious: { adjective: ["suspicious", "doubtful", "questioning"], verb: ["question", "suspect", "distrust"] }
             };
-            const containsMoodQuery = (query) => {
-                const moodKeywords = ["how are you", "feel", "mood", "happy", "sad", "angry", "scared"];
-                return moodKeywords.some(keyword => query.toLowerCase().includes(keyword));
-            };
-            if (containsMoodQuery(query)) {
-                const moodFilter = moodFilters[mood] || { adjective: [], verb: [] };
-        
-                if (moodFilter.adjective.length > 0) {
-                    adjective = adjective.filter(word => moodFilter.adjective.some(moodWord => word.word.includes(moodWord)));
-                }
-                if (moodFilter.verb.length > 0) {
-                    verb = verb.filter(word => moodFilter.verb.some(moodWord => word.word.includes(moodWord)));
-                }
-            }
             const selectBestWord = (words) => {
                 if (!words.length) return null;
                 let maxScore = 0;
@@ -1803,7 +1848,7 @@ export class Norology {
             let selectedAdjective = selectBestWord(adjective) || faker.hacker.adjective();
             let selectedConjunction = selectBestWord(conjunction) || faker.word;
             const previousMemory = memory.find(entry => entry.Query.toLowerCase() === query.toLowerCase());
-            
+
             if (previousMemory) {
                 const previousMood = previousMemory.Fell;
                 const previousMoodFilter = moodFilters[previousMood] || { adjective: [], verb: [] };
@@ -1839,14 +1884,14 @@ export class Norology {
                 if (isTalkingAboutUser) {
                     return {
                         selectedVerb: ["is"],
-                        selectedNoun: [udata[`bot${formattedParam}`] || "unknown"],
+                        selectedNoun: udata[`bot${formattedParam}`] || "unknown",
                         selectedAdjective: ["known"],
                         selectedConjunction: ["and"]
                     };
                 } else if (isTalkingAboutSelf) {
                     return {
                         selectedVerb: ["is"],
-                        selectedNoun: [udata[`user${formattedParam}`] || "unknown"],
+                        selectedNoun: udata[`user${formattedParam}`] || "unknown",
                         selectedAdjective: ["known"],
                         selectedConjunction: ["and"]
                     };
@@ -1858,12 +1903,17 @@ export class Norology {
                 selectedAdjective: [selectedAdjective],
                 selectedConjunction: [selectedConjunction]
             };
-        };              
+        };
+        async function fixsentences(text) {
+            if (isNaN(text.charAt(0))) {
+                return (text.charAt(0).toUpperCase() + text.slice(1)).replace(/\s+/g, ' ');
+            }
+            return text.replace(/\s+/g, ' ');
+        }
         const getReplyUntilValid = async (query, user) => {
             let reply = '';
-
             while (!reply.trim()) {
-                reply = await generatePersonalizedReply(query, user, mapdata, memory);
+                reply = await fixsentences(await generatePersonalizedReply(query, user, mapdata, memory));
             }
             return reply;
         };
@@ -2146,9 +2196,6 @@ class SUAI {
         let result = solveMathExpression(query.replaceAll("!", " factorial").replaceAll("+", " plus").replaceAll("-", " minus").replaceAll("*", " multiply").replaceAll("/", " divide").replaceAll("%", " mod").replaceAll("^", " power"));
         if (operatorRegex.test(queryfixed)) { return result.toString() }
         else { return '' }
-    }
-    async AISU() {
-
     }
 }
 (function () {

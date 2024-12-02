@@ -6,9 +6,12 @@ const answers = await inquirer.prompt([
     {
       type: 'input',
       name: 'question',
-      message: 'Question:',
+      message: 'Question:'
     },
   ]);
-  console.log(`\x1b[92m${await AI.AI(await answers.question)}\x1b[0m`);
+  const AllData = await AI.AI(await answers.question);
+  console.log(`\x1b[92m${(JSON.stringify(AllData, null, 2).replaceAll(/\n\n/g, '\n'))}\x1b[0m`);
+  /*** @example For example ***/
+  console.log(`\x1b[93m${AllData.AI}\x1b[0m`);
   await query(); 
 };await query();

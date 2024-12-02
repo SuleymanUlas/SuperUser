@@ -51,7 +51,16 @@ export class SUPER_USER_AI {
       let prnum = Math.floor(Math.random() * 2);
       if (prnum === 1) { question = '' }
     }
-    return retunmessage + '\n' + question;
+    const Data =
+        {
+          "Train":
+            [value],
+           "AI":
+           [retunmessage],
+           "Question":
+           [question] 
+        }
+    return Data;
   }
   /**
    * 
