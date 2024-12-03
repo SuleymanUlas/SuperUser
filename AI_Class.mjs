@@ -1219,7 +1219,6 @@ export class CreateQuery {
         const feData = await fe.AllData();
         const maxValue = Math.max(...Object.values(feData));
         const maxKey = Object.keys(feData).find(key => feData[key] === maxValue);
-
         let mood = '';
         switch (maxKey) {
             case 'Hqx': mood = 'Happy'; break;
@@ -1230,31 +1229,17 @@ export class CreateQuery {
             case 'Default': mood = 'Neutral'; break;
             default: mood = 'Neutral'; break;
         }
-        const templates = JSON.parse(await fsp.readFile('./AllData/ReplyTemplates.json'));
-        const generalReplyTemplates = templates.generalReplyTemplates;
-        const personalReplyTemplates = templates.personalReplyTemplates;
-        const healthReplyTemplates = templates.healthReplyTemplates;
-        const careerReplyTemplates = templates.careerReplyTemplates;
-        const dietReplyTemplates = templates.dietReplyTemplates;
-        const workReplyTemplates = templates.workReplyTemplates;
-        const emotionalReplyTemplates = templates.emotionalReplyTemplates;
-        const supportReplyTemplates = templates.supportReplyTemplates;
-        let templateChoice = generalReplyTemplates;
-        if (query.includes('health') || query.includes('fitness')) {
-            templateChoice = healthReplyTemplates;
-        } else if (query.includes('diet') || query.includes('nutrition')) {
-            templateChoice = dietReplyTemplates;
-        } else if (query.includes('career') || query.includes('job')) {
-            templateChoice = careerReplyTemplates;
-        } else if (query.includes('work') || query.includes('productivity')) {
-            templateChoice = workReplyTemplates;
-        } else if (query.includes('emotion') || query.includes('mood')) {
-            templateChoice = emotionalReplyTemplates;
-        } else if (query.includes('support') || query.includes('help')) {
-            templateChoice = supportReplyTemplates;
-        } else {
-            templateChoice = Math.random() > 0.5 ? personalReplyTemplates : generalReplyTemplates;
-        }
+        const templates = JSON.parse(await fsp.readFile('./AllData/QueryTemplates.json'));
+        let templateChoice = templates.moodBased;
+        if (query.includes('mood') || query.includes('emotion') || query.includes('feel') || query.includes('happy') || query.includes('sad') || query.includes('moodiness')) {
+            templateChoice = templates.moodBased;
+        } else if (query.includes('behavior') || query.includes('action') || query.includes('habit') || query.includes('attitude') || query.includes('reaction') || query.includes('response')) {
+            templateChoice = templates.behaviorBased;
+        } else if (query.includes('routine') || query.includes('habit') || query.includes('schedule') || query.includes('daily') || query.includes('practice') || query.includes('regularly')) {
+            templateChoice = templates.routineBased;
+        } else if (query.includes('improvement') || query.includes('growth') || query.includes('better') || query.includes('enhance') || query.includes('development') || query.includes('upgrade')) {
+            templateChoice = templates.improvementBased;
+        }        
         const wordsData = await this.loadWordData();
         const { selectedVerb, selectedNoun, selectedAdjective, selectedConjunction } = await this.selectWordsBasedOnQueryAndMood(query, mood, wordsData, User);
         let dynamicComplement = selectedNoun;
