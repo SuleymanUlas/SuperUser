@@ -290,7 +290,7 @@
     "json-schema": "^0.4.0",
     "json-schema-traverse": "^0.4.1",
     "json-stringify-safe": "^5.0.1",
-    "json5": "^0.5.1",
+    "json5": "^1.0.2",
     "jsonfile": "^6.1.0",
     "jsprim": "^1.4.2",
     "kareem": "^2.6.3",
