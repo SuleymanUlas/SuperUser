@@ -493,7 +493,7 @@ ${two}
         }
         const filelist2 = ["QueryAnalayzing.json", "QueryTemplates.json", "ReplyTemplates.json"];
         for (let i = 0; i < filelist2.length; i++) {
-            await this.fetchFileFromGitHub('SuleymanUlas/SuperUser/AllData/', `${filelist2[i]}`).then(async data => {
+            await this.fetchFileFromGitHub('SuleymanUlas/SuperUser', `AllData/${filelist2[i]}`).then(async data => {
                 try {
                     await fsp.writeFile(`./${filelist2[i]}`, data);
                     console.log(`\x1b[35m\n${filelist2[i]} Updated!\x1b[0m`);
@@ -503,8 +503,8 @@ ${two}
                 .catch(error => { console.log(`\x1b[91m${error}\nPlease restart!\nPlease control the conection.\x1b[0m`) });
         }
         const filelist3 = ["Worker_similitary.mjs", "QueryTemplates.json", "ReplyTemplates.json"];
-        for (let i = 0; i < filelist2.length; i++) {
-            await this.fetchFileFromGitHub('SuleymanUlas/SuperUser/src/', `${filelist3[i]}`).then(async data => {
+        for (let i = 0; i < filelist3.length; i++) {
+            await this.fetchFileFromGitHub('SuleymanUlas/SuperUser', `${filelist3[i]}`).then(async data => {
                 try {
                     await fsp.writeFile(`./${filelist3[i]}`, data);
                     console.log(`\x1b[35m\n${filelist3[i]} Updated!\x1b[0m`);
