@@ -495,7 +495,7 @@ ${two}
         for (let i = 0; i < filelist2.length; i++) {
             await this.fetchFileFromGitHub('SuleymanUlas/SuperUser', `AllData/${filelist2[i]}`).then(async data => {
                 try {
-                    await fsp.writeFile(`./${filelist2[i]}`, data);
+                    await fsp.writeFile(`./AllData/${filelist2[i]}`, data);
                     console.log(`\x1b[35m\n${filelist2[i]} Updated!\x1b[0m`);
                 }
                 catch (err) { console.log(`\x1b[91m${err}\x1b[0m`) }
@@ -506,7 +506,7 @@ ${two}
         for (let i = 0; i < filelist3.length; i++) {
             await this.fetchFileFromGitHub('SuleymanUlas/SuperUser', `/src${filelist3[i]}`).then(async data => {
                 try {
-                    await fsp.writeFile(`./${filelist3[i]}`, data);
+                    await fsp.writeFile(`./src/${filelist3[i]}`, data);
                     console.log(`\x1b[35m\n${filelist3[i]} Updated!\x1b[0m`);
                 }
                 catch (err) { console.log(`\x1b[91m${err}\x1b[0m`) }
@@ -1547,15 +1547,7 @@ async function readFileAsync(filePath) {
         });
     });
 }
-const allDataForDictionary = JSON.parse(await readFileAsync(`./AllData/QueryAnalayzing.json`));
 export class Norology {
-    /**
-     * for (let i ...) switch case create reply and query after train but only status, and feel status
-     * Use Regexp for file evalatue query Note: (evalatuable) => Math , Code, ...
-     * Analayzing Memory All days? or Days?
-     * switch case <=Math.random case '0': case '1': ...
-     * split(' ') after for word (i) => word[i] properties
-     */
     /**
      * 
      * @param {*} Query 
