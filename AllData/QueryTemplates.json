@@ -1,5 +1,4 @@
 {
-    "questionTemplates": {
       "moodBased": [
         "Why does {subject} feel {adjective} today? Could it be because {subject} {verb} {complement}?",
         "Does {subject} feel {adjective} about {verb} {complement}? What could make {subject} feel better?",
@@ -29,6 +28,5 @@
         "Is there anything that might help {subject} feel more {adjective} after {verb} {complement}?",
         "Could {subject} get better results by {verb} {complement} more frequently to feel {adjective}?"
       ]
-    }
   }
   

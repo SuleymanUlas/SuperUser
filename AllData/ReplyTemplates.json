@@ -112,6 +112,64 @@
       "I believe that {subject} will achieve {adjective} career goals by {verb} {complement} more often.",
       "{subject} might be thinking about {adjective} career goals, and {subject} should consider {verb} {complement}.",
       "{subject} {verb} {complement}, but if {subject} wants to feel {adjective} in their career, {subject} should try again."
+    ],
+    "emotionalReplyTemplates": [
+      "I'm feeling quite {mood} today! Maybe {subject} should {verb} {complement} to lift your spirits.",
+      "Today, I am feeling {mood}! How about you, {subject}? Are you feeling {mood} too?",
+      "I think I’m feeling {mood}. {subject}, are you experiencing a {mood} mood?",
+      "What’s up, {subject}? How do you feel today? I’m feeling {mood} myself!",
+      "It seems like {subject} might be {mood}. Maybe it’s time to {verb} {complement}!",
+      "{subject}, I feel a bit {mood} today. Let’s talk about it over {verb} {complement}.",
+      "I feel {mood} today! Maybe we can change that by {verb} {complement} together.",
+      "Feeling {mood} today, {subject}. How are you holding up? Perhaps {verb} {complement} would help?",
+      "It seems like {subject} is feeling {mood}. Want to try {verb} {complement} for a change?",
+      "{subject} is feeling {mood}. Would you like to {verb} {complement} to feel better?",
+      "I bet {subject} would feel better if {subject} tried {verb} {complement}. Let’s do it together!",
+      "I know I’m feeling {mood}, {subject}. Maybe {subject} should try {verb} {complement} to feel better.",
+      "Are you in a {mood} mood, {subject}? How about we {verb} {complement} to feel better?",
+      "Feeling {mood}, {subject}? Maybe {subject} could {verb} {complement} to brighten up.",
+      "If {subject} is feeling {mood}, {subject} might want to {verb} {complement} to change things up.",
+      "It looks like {subject} is {mood}. I think {subject} could {verb} {complement} to feel better.",
+      "Feeling {mood} today, {subject}? Maybe {subject} should {verb} {complement} to change that.",
+      "{subject} seems a bit {mood}. Perhaps {subject} should {verb} {complement} to feel more energized.",
+      "I think I’ll go for a {mood} vibe today. Let’s {verb} {complement} to switch things up, {subject}.",
+      "{subject} feels {mood} today. I think we should {verb} {complement} to improve that.",
+      "{subject}, I see you're feeling {mood}. Let’s try to {verb} {complement} for a fresh start.",
+      "{subject}, I’m feeling {mood} right now. How about we try {verb} {complement} to feel better?",
+      "If you’re feeling {mood}, {subject}, maybe it’s time for {verb} {complement}. Let’s make it happen!",
+      "Let’s switch up the mood! {subject} could try {verb} {complement} to feel more {mood}.",
+      "{subject}, are you feeling {mood}? I think we should try {verb} {complement} for a fresh feeling.",
+      "{subject} seems {mood}. Maybe {subject} should {verb} {complement} to feel better."
+    ],
+    "dietReplyTemplates": [
+      "{subject}, a healthy diet is the foundation of feeling good. Maybe {subject} should try {verb} {complement} for better energy.",
+      "{subject}, eating well can make a big difference in how you feel. How about you {verb} {complement} today?",
+      "How about {verb} {complement} to stay healthy and nourish your body, {subject}?",
+      "Eating nutritious foods can really boost your mood, {subject}. Try {verb} {complement} today!",
+      "{subject}, fueling your body with the right foods is key. Try {verb} {complement} to stay on track with your health goals.",
+      "Maintaining a balanced diet is crucial, {subject}. How about {verb} {complement} today for a health boost?",
+      "{subject}, eating mindfully can really help improve your overall health. Try {verb} {complement} to start today!",
+      "You are what you eat, {subject}. It might be a good time to {verb} {complement} for better health."
+    ],
+    "workReplyTemplates": [
+      "{subject}, your work ethic is impressive! How about {verb} {complement} to stay productive today?",
+      "Work can be a lot sometimes, {subject}. How about {verb} {complement} to make it a little more manageable?",
+      "{subject}, work-life balance is key! Maybe it’s time to {verb} {complement} to de-stress and stay on top of things.",
+      "{subject}, consistency is key to success in your work. Try {verb} {complement} to stay productive.",
+      "Remember to take breaks, {subject}. Taking a moment to {verb} {complement} will help you stay energized for the tasks ahead.",
+      "It’s easy to get overwhelmed, but if you {verb} {complement}, you’ll stay focused and get more done, {subject}.",
+      "{subject}, stay on track with your goals. If you {verb} {complement}, your productivity will soar.",
+      "{subject}, your hard work is inspiring! Keep {verb} {complement} to push through the challenges at work."
+    ],
+    "supportReplyTemplates": [
+      "{subject}, everyone needs a little support sometimes. If you {verb} {complement}, you’ll feel better in no time.",
+      "Hey {subject}, I’m here for you! If you {verb} {complement}, it might help ease things.",
+      "It’s okay to lean on others, {subject}. Sometimes, all it takes is {verb} {complement} to feel supported.",
+      "{subject}, I know things can be tough, but {verb} {complement} might be just the thing to bring some peace of mind.",
+      "If you’re feeling overwhelmed, {subject}, try {verb} {complement} to feel more supported and connected.",
+      "{subject}, support is all around you. Sometimes, just {verb} {complement} can make a huge difference.",
+      "It’s important to take care of yourself, {subject}. Try {verb} {complement} to feel a little more at ease.",
+      "{subject}, don’t hesitate to reach out for help. If you {verb} {complement}, you’ll feel more supported."
     ]
   }
   
