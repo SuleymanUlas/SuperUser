@@ -422,7 +422,7 @@
     "psl": "^1.10.0",
     "pump": "^3.0.2",
     "punycode": "^2.3.1",
-    "puppeteer": "^23.8.0",
+    "puppeteer": "^23.10.1",
     "puppeteer-core": "^23.8.0",
     "qs": "^6.5.3",
     "queue-microtask": "^1.2.3",
@@ -561,7 +561,11 @@
     "zod": "^3.23.8"
   },
   "scripts": {
-    "test": "node test.mjs"
+    "build:ts": "tsc",
+    "build:webpack": "webpack",
+    "build": "npm run build:ts && npm run build:webpack",
+    "start": "node test.mjs",
+    "dev": "webpack serve --open --mode development"
   },
   "repository": {
     "type": "git",
@@ -581,5 +585,17 @@
   "bugs": {
     "url": "https://github.com/SuleymanUlas/SuperUser/issues"
   },
-  "homepage": "https://discord.gg/Yat4Nmgn"
+  "homepage": "https://discord.gg/Yat4Nmgn",
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@types/node-cmd": "^5.0.0",
+    "@types/os-utils": "^0.0.4",
+    "babel-loader": "^9.2.1",
+    "ts-loader": "^9.5.1",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.1.0",
+    "webpack-node-externals": "^3.0.0"
+  }
 }

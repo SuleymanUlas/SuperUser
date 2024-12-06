@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",                     // Use ESNext modules
+    "target": "ES2021",                     // Target modern JavaScript
+    "outDir": "./dist",                     // Output directory
+    "moduleResolution": "node",             // Node module resolution
+    "strict": true,                         // Enable strict type checking
+    "esModuleInterop": true,                // Interop with CommonJS modules
+    "declaration": false,                   // No .d.ts files (optional for this case)
+    "sourceMap": true                       // Generate source maps (optional)
+  },
+  "include": ["./**/*"],                  // Include all files in src/
+  "exclude": ["node_modules", "dist","s.u.a.i.d.ts"]       // Exclude node_modules, dist and s.u.a.i.d.ts
+}

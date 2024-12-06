@@ -1,4 +1,4 @@
-import { SUPER_USER_AI } from "s.u.a.i";
+import { SUPER_USER_AI } from "./dist/index.mjs";
 import inquirer from "inquirer";
 const AI = new SUPER_USER_AI;
 const query = async function Query() {
