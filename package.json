@@ -591,6 +591,8 @@
     "@babel/preset-env": "^7.26.0",
     "@types/node-cmd": "^5.0.0",
     "@types/os-utils": "^0.0.4",
+    "@types/sentiment": "^5.0.4",
+    "@types/string-similarity": "^4.0.2",
     "babel-loader": "^9.2.1",
     "ts-loader": "^9.5.1",
     "webpack": "^5.97.1",

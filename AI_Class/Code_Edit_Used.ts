@@ -327,7 +327,7 @@ ${two}
      * @description User data read or write
      * @example const us = new Code_Edit_Used; await us.UserData(User, { prp: 'write or read', param: 'name', inf: 'SU' });
      */
-    async UserData(User: string, Process: Process) {
+    async UserData(User: string, Process: Process):Promise<any> {
         let dat = '';
         let dats = '';
         const userDir = `./User/${User}/Data`;

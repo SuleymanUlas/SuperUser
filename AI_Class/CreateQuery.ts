@@ -5,7 +5,7 @@ import nlp from 'compromise';
 import { faker } from '@faker-js/faker';
 import { Code_Edit_Used } from "./Code_Edit_Used";
 
-interface Word{
+export interface Word{
     tags:any[],
     word:string,
     meanings:any

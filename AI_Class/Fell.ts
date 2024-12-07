@@ -1,3 +1,7 @@
+export interface FellData {
+    [key: string]: number
+}
+export type Mood = "Hqx" | "Aqx" | "Sqx" | "Saqx" | "Suqx" | "Default"
 
 export class Fell {
     /**
@@ -194,7 +198,7 @@ export class Fell {
             }
         }
     }
-    async Data(User: string) {
+    async Data(User: string): Promise<FellData> {
         try {
             let dat;
             for (let i = 0; i < Fell.feelArray.length; i++) {

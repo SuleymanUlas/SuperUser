@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   target: 'node',                              // Target Node.js environment
-  entry: './index.mjs',                     // Entry file (can be .ts or .mjs)
+  entry: './dist/index.js',                     // Entry file (can be .ts or .mjs)
   output: {
     filename: 'index.mjs',                    // Output file name
     path: path.resolve(__dirname, 'dist'),     // Output directory

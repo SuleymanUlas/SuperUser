@@ -36,7 +36,7 @@ export class SUFunc {
    * @param {*} sentence 
    * @returns 
    */
-  async Similitary(sentence:any) {
+  async Similitary(sentence:any):Promise<any> {
     return new Promise((resolve, reject) => {
       const worker = new Worker(new URL('../../src/Worker_similitary.mjs', import.meta.url));
       worker.postMessage(sentence);
