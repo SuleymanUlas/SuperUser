@@ -200,7 +200,7 @@ class UI_SU {
       } else {
         randomQuery = filteredTopQueries[Math.floor(Math.random() * filteredTopQueries.length)];
       }
-      I = randomQuery.index; const FuncRegex = /.:([^:]+):./g; const datsearch = /<=DA<([^>]+)>TA=>/g;
+      randomQuery === undefined ? I = 0 : I = randomQuery.index; const FuncRegex = /.:([^:]+):./g; const datsearch = /<=DA<([^>]+)>TA=>/g;
       if (FuncRegex.test(DataParse[I].reply) || queryAuto) {
         let message = DataParse[I].reply;
         const getdataRegex = new RegExp('::<([^>]+)>::', 'g');

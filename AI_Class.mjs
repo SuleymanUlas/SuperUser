@@ -89,7 +89,6 @@ export class Bootfunc {
         if (apiKey == '<=DA<apikey>TA=>' || searchEngineId == '<=DA<searchengineid>TA=>') { Info('0'); return '' }
         const url = `https://www.googleapis.com/customsearch/v1?key=${apiKey}&cx=${searchEngineId}&q=${SearchG}`;
         try {
-            let num = '';
             const response = await fetch(url);
             const data = await response.json();
             const { items } = data;
@@ -1611,7 +1610,6 @@ export class Norology {
         const workReplyTemplates = templates.workReplyTemplates;
         const emotionalReplyTemplates = templates.emotionalReplyTemplates;
         const supportReplyTemplates = templates.supportReplyTemplates;
-
         async function generatePersonalizedReply(query, user, mapdata, memory) {
             let wordsData = await loadWordData();
             let data = await ceu.UserData(user, { prp: 'all' });
